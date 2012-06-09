@@ -52,29 +52,20 @@ package
 			blocks.add(currentBlock);
 			allBlocks.add(currentBlock);
 			currentBlock.allBlocks = allBlocks;
-			
-//			for (var i:String in blocks.members)
-//			{
-//				trace(blocks.members[i].x,blocks.members[i].y);
-//			}
+
 		}
 		
 		public function generateBlocks():void
 		{
 			if (!generating)
 			{
-				var dog:Number;
 				generating = true;
 				currentBlock = new Block(FlxG.width/2 - 8, 8);
 				add(currentBlock);
 				allBlocks.add(currentBlock);
 				currentBlock.allBlocks = allBlocks;
 			}
-			if (currentBlock.canMove(0,1))
-			{
-				// do nothing at all even ever!
-			}
-			else
+			if (!currentBlock.canMove(0,1))
 			{
 				trace("generating a new block");
 				blocks.add(currentBlock);
@@ -88,36 +79,7 @@ package
 			generateBlocks();
 			
 			var tempBlocks:FlxGroup = new FlxGroup();
-			
-//			if (FlxG.keys.X)
-//			{
-//				var block:Block;
-//				var i:String;
-//				if (player.facingLeft())
-//				{
-//					for (i in blocks.members)
-//					{
-//						blocks = blocks.members[i];
-//						if (block.x == player.x - 4
-//							&& block.y <= player.y + 4)
-//						{
-//							tempBlocks.add(block);
-//						}
-//					}
-//				}
-//				else if (player.facingRight())
-//				{
-//					for (i in blocks.members)
-//					{
-//						block = blocks.members[i];
-//						if (block.x == player.x + 4
-//							&& block.y <= player.y + 4)
-//						{
-//							tempBlocks.add(block);
-//						}
-//					}
-//				}
-//			}
+		
 			if (FlxG.keys.X)
 			{
 				var block:Block;

@@ -21,7 +21,7 @@ package
 		{
 			dx = dx*frameWidth;
 			dy = dy*frameWidth;
-//			trace(canMove(dx,dy));
+
 			if (canMove(dx,dy))
 			{
 				x += dx;
@@ -31,8 +31,6 @@ package
 		
 		public function canMove(dx:Number, dy:Number):Boolean
 		{
-//			trace(x + dx, y + dy);
-//			trace(!overlapsAt(x+dx,y+dy,allBlocks),FlxG.width - 4, FlxG.height - 4)
 			return !overlapsAt(x + dx, y + dy, allBlocks)
 				&& x + dx >= 0
 				&& x + dx <= FlxG.width - 4
@@ -46,24 +44,5 @@ package
 			{
 				counter = 0;
 				move(0,1)
-//				trace (!overlapsAt(x, y + frameHeight,allBlocks))
-
-//				if (!overlapsAt(x, y + frameHeight,allBlocks))
-//				{
-//					y += frameHeight;
-//				}
-			}
-//			kludgeUpdate();
-		}
-		
-//		public function kludgeUpdate():void
-//		{
-//			if (x < 0)
-//				x = 0;
-//			if (x > FlxG.width - 4)
-//				x = FlxG.width - 4;
-//			if (y > FlxG.height - 4)
-//				y = FlxG.height - 4;
-//		}
 	}
 }
