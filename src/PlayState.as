@@ -41,11 +41,11 @@ package
 //			allBlocks.add(currentBlock);
 //			currentBlock.allBlocks = allBlocks;
 //			
-//			currentBlock = new Block(FlxG.width/2 -  8,FlxG.height - 8);
-//			add(currentBlock);
-//			blocks.add(currentBlock);
-//			allBlocks.add(currentBlock);
-//			currentBlock.allBlocks = allBlocks;
+			currentBlock = new Block(FlxG.width/2 -  8,FlxG.height - 4);
+			add(currentBlock);
+			blocks.add(currentBlock);
+			allBlocks.add(currentBlock);
+			currentBlock.allBlocks = allBlocks;
 //			
 			currentBlock = new Block(FlxG.width/2 -  4,FlxG.height - 4);
 			add(currentBlock);
@@ -69,16 +69,22 @@ package
 //				trace("beginning generating");
 				generating = true;
 				
-				currentBlock = new Block(FlxG.width/2 - 8, 8);
+				currentBlock = new Block(Math.floor(Math.random()*FlxG.width/4)*4, 8);
 				add(currentBlock);
 //				blocks.add(currentBlock);
 				allBlocks.add(currentBlock);
 				currentBlock.allBlocks = allBlocks;
 				
+//				for (var i:String in allBlocks)
+//				{
+//					allBlocks.members[i].allBlocks = allBlocks;
+//				}
+				
+//				currentBlock.allBlocks = allBlocks;
 //				trace(currentBlock.allBlocks.members.length);
 //				trace(player.allBlocks.members.length);
 			}
-			if (!currentBlock.canMove(0,1))
+			if (currentBlock.landed)//(!currentBlock.canMove(0,currentBlock.frameHeight))
 			{
 //				trace("generating a new block");
 				blocks.add(currentBlock);
@@ -90,6 +96,12 @@ package
 		
 		override public function update():void
 		{
+			trace(!currentBlock.canMove(0,currentBlock.frameHeight));
+//			var dx:Number = currentBlock.frameWidth;
+//			var dy:Number = currentBlock.frameHeight;
+//			var X:Number = currentBlock.x;
+//			var Y:Number = currentBlock.y;
+//			trace(X+dx >=0, X+dx <= FlxG.width - 4, Y + dy <= FlxG.height - 4, !currentBlock.overlapsAt(X + dx, Y + dy, allBlocks));
 			
 //			for (var i:String in currentBlock.allBlocks.members)
 //			{

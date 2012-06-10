@@ -42,9 +42,9 @@ package
 				{
 					if (!blocks.members[i].canMove(dx,dy))
 					{
-						var X:Number = blocks.members[i].x;
-						var Y:Number = blocks.members[i].y;
-						trace(X+dx >=0, X+dx <= FlxG.width - 4, Y + dy <= FlxG.height - 4, !overlapsAt(X + dx, Y + dy, allBlocks));
+//						var X:Number = blocks.members[i].x;
+//						var Y:Number = blocks.members[i].y;
+//						trace(X+dx >=0, X+dx <= FlxG.width - 4, Y + dy <= FlxG.height - 4, !overlapsAt(X + dx, Y + dy, allBlocks));
 //						trace("this block shouldn't move");
 //						trace(blocks.members[i].x + dx, blocks.members[i].y + dy);
 						canMoveBlocks = false;
