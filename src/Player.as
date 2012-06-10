@@ -8,7 +8,7 @@ package
 		public var counter:Number = 0;
 //		public var blocks:FlxGroup = new FlxGroup();
 		public var block:Block = null;
-		public var allBlocks:FlxGroup = new FlxGroup();
+//		public var allBlocks:FlxGroup = new FlxGroup();
 		
 		public function Player()
 		{
@@ -83,9 +83,8 @@ package
 		
 		public function canMove(dx:Number,dy:Number):Boolean
 		{
-			return (!overlapsAt(x + dx, y + dy, allBlocks)
-				&& x + dx >= 0
-				&& x + dx <= FlxG.width - frameWidth);
+//			return (!overlapsAt(x + dx, y + dy, allBlocks)
+			return x + dx >= 0 && x + dx <= FlxG.width - frameWidth;
 		}
 		
 		override public function update():void

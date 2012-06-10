@@ -29,7 +29,7 @@ package
 			
 			player = new Player();
 			add(player);
-			player.allBlocks = allBlocks;
+//			player.allBlocks = allBlocks;
 			
 			// this is dumb, clean it up with some generator later
 			// meh
@@ -257,18 +257,21 @@ package
 				//			allBlocks.clear();
 				
 				//			trace(removeBlocks.members.length);
-				
-				
-				
-				
-				super.update();
-				FlxG.collide();	
+			
 			}
 			else
 			{
 				winText.text = "YOU\nHAVE\nNOW\nWON!\n:D";
 				trace("win condition");
+				
+				if (FlxG.keys.X)
+				{
+					FlxG.resetGame();
+				}
+				
 			}
+			super.update();
+			FlxG.collide();	
 		}
 	}
 }
