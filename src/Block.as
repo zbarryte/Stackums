@@ -19,8 +19,8 @@ package
 		
 		public function move(dx:Number,dy:Number):void
 		{
-			dx = dx*frameWidth;
-			dy = dy*frameWidth;
+//			dx = dx*frameWidth;
+//			dy = dy*frameWidth;
 
 			if (canMove(dx,dy))
 			{
@@ -43,7 +43,7 @@ package
 			if (counter >= 0.5)
 			{
 				counter = 0;
-				move(0,1)
+				move(0,frameHeight);
 			}
 		}
 	}

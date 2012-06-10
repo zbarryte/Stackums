@@ -12,7 +12,7 @@ package
 		
 		private var floor:FlxTileblock;
 		protected var player:Player;
-		protected var currentBlock:Block;
+		protected var currentBlock:Block = new Block();
 		private var blocks:FlxGroup = new FlxGroup();
 		private var allBlocks:FlxGroup = new FlxGroup();
 		private var generating:Boolean = false;
@@ -47,35 +47,54 @@ package
 //			allBlocks.add(currentBlock);
 //			currentBlock.allBlocks = allBlocks;
 //			
-			currentBlock = new Block(FlxG.width/2 -  8,FlxG.height - 4);
+			currentBlock = new Block(FlxG.width/2 -  4,FlxG.height - 4);
 			add(currentBlock);
-			blocks.add(currentBlock);
 			allBlocks.add(currentBlock);
 			currentBlock.allBlocks = allBlocks;
-
+			blocks.add(currentBlock);
+			
+//			trace(currentBlock.allBlocks.members.length);
+			
+//			currentBlock = new Block(FlxG.width/2 -  8,FlxG.height - 8);
+//			add(currentBlock);
+//			blocks.add(currentBlock);
+//			allBlocks.add(currentBlock);
+//			currentBlock.allBlocks = allBlocks;
 		}
 		
 		public function generateBlocks():void
 		{
 			if (!generating)
 			{
+//				trace("beginning generating");
 				generating = true;
+				
 				currentBlock = new Block(FlxG.width/2 - 8, 8);
 				add(currentBlock);
+//				blocks.add(currentBlock);
 				allBlocks.add(currentBlock);
 				currentBlock.allBlocks = allBlocks;
+				
+//				trace(currentBlock.allBlocks.members.length);
+//				trace(player.allBlocks.members.length);
 			}
 			if (!currentBlock.canMove(0,1))
 			{
-				trace("generating a new block");
+//				trace("generating a new block");
 				blocks.add(currentBlock);
 				generating = false;
+//				trace(blocks.members.length);
 				generateBlocks();
 			}
 		}
 		
 		override public function update():void
 		{
+			
+//			for (var i:String in currentBlock.allBlocks.members)
+//			{
+//				trace(currentBlock.allBlocks.members[i].y);
+//			}
 			generateBlocks();
 			
 			var tempBlocks:FlxGroup = new FlxGroup();

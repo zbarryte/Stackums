@@ -30,27 +30,34 @@ package
 		
 		public function move(dx:Number,dy:Number):void
 		{
-			if (canMove(dx,dy))
+			dx *= frameWidth
+			dy *= frameHeight
+			
+			trace(canMove(dx,dy));
+			if (canMove(dx,dy) || canMove(dx*2,dy*2))
 			{	
 				var i:String;
-				var moveBlocks:Boolean = true;
+				var canMoveBlocks:Boolean = true;
 				for (i in blocks.members)
 				{
 					if (!blocks.members[i].canMove(dx,dy))
 					{
-						trace("this block shouldn't move");
-						trace(blocks.members[i].x, blocks.members[i].y);
-						moveBlocks = false;
+						var X:Number = blocks.members[i].x;
+						var Y:Number = blocks.members[i].y;
+						trace(X+dx >=0, X+dx <= FlxG.width - 4, Y + dy <= FlxG.height - 4, !overlapsAt(X + dx, Y + dy, allBlocks));
+//						trace("this block shouldn't move");
+//						trace(blocks.members[i].x + dx, blocks.members[i].y + dy);
+						canMoveBlocks = false;
 					}
 				}
-				if (moveBlocks)
+				if (canMoveBlocks)
 				{
 					for (i in blocks.members)
 					{
 						blocks.members[i].move(dx,dy);
 					}
-					x += dx*frameWidth;
-					y += dy*frameHeight;
+					x += dx;
+					y += dy;
 				}
 			}
 			
