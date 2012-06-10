@@ -19,6 +19,7 @@ package
 		private var removeBlocks:FlxGroup = new FlxGroup();
 		private var numBlocks:Number = 0;
 		private var counter:Number = 0;
+		private var winText:FlxText;
 		
 		override public function create():void
 		{	
@@ -65,6 +66,11 @@ package
 			//			blocks.add(currentBlock);
 			//			allBlocks.add(currentBlock);
 			//			currentBlock.allBlocks = allBlocks;
+			winText = new FlxText(0,0,40);
+			winText.text = "you\nhave\nnot\nwon\n:(";
+			winText.alignment = "center";
+			winText.flicker(-1);
+			add(winText);
 		}
 		
 		public function generateBlocks():void
@@ -263,10 +269,11 @@ package
 				//			}
 				
 				super.update();
-				FlxG.collide();
+				FlxG.collide();	
 			}
 			else
 			{
+				winText.text = "YOU\nHAVE\nNOW\nWON!\n:D";
 				trace("win condition");
 			}
 		}
