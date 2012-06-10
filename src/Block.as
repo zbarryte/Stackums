@@ -10,9 +10,9 @@ package
 		public var allBlocks:FlxGroup = new FlxGroup();
 		public var landed:Boolean = false;
 		public var ceiling:Block = null;
-		public var maxTowerHeight:Number = 5;
+		public var maxTowerHeight:Number = 3;
 		public var curTowerHeight:Number = 1;
-		public var tower:FlxGroup = new FlxGroup;
+		public var flavor:String = "mint chip";
 		
 		public function Block(X:Number=0, Y:Number=0)
 		{
@@ -61,7 +61,7 @@ package
 			for (var i:String in allBlocks.members)
 			{
 				block = allBlocks.members[i];
-				if (block.x == x && block.y == y - frameHeight)
+				if (block.x == x && block.y == y - frameHeight && block.flavor == flavor)
 				{
 					ceiling = block;
 				}
@@ -91,9 +91,30 @@ package
 			return towerHeight() == maxTowerHeight;
 		}
 		
+		public function tower():FlxGroup
+		{
+			return towerHelper(this,new FlxGroup());
+		}
+		
+		public function towerHelper(block:Block,group:FlxGroup):FlxGroup
+		{
+			group.add(block);
+			if (block.ceiling == null)
+			{
+				return group;
+			}
+			return towerHelper(block.ceiling,group);
+		}
+		
 		override public function update():void
 		{	
-			trace(towerHeight());
+//			trace(towerHeight());
+//			trace(tower());
+//			var tower:FlxGroup = tower();
+//			for (var i:String in tower.members)
+//			{
+//				trace(tower.members[i].y);
+//			}
 			
 			actionTimer += FlxG.elapsed;
 			// Should action timer reset?
