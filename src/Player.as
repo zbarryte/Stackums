@@ -6,7 +6,8 @@ package
 	{
 		[Embed(source="assets/you.png")] private var ImgPlayer:Class;
 		public var counter:Number = 0;
-		public var blocks:FlxGroup = new FlxGroup();
+//		public var blocks:FlxGroup = new FlxGroup();
+		public var block:Block = null;
 		public var allBlocks:FlxGroup = new FlxGroup();
 		
 		public function Player()
@@ -33,32 +34,49 @@ package
 			dx *= frameWidth
 			dy *= frameHeight
 			
-			trace(canMove(dx,dy));
+//			trace(canMove(dx,dy));
 			if (canMove(dx,dy) || canMove(dx*2,dy*2))
 			{	
-				var i:String;
-				var canMoveBlocks:Boolean = true;
-				for (i in blocks.members)
+				var blocks:FlxGroup = new FlxGroup;
+//				var i:String;
+//				var canMoveBlocks:Boolean = true;
+//				for (i in blocks.members)
+//				{
+//					if (!blocks.members[i].canMove(dx,dy))
+//					{
+////						var X:Number = blocks.members[i].x;
+////						var Y:Number = blocks.members[i].y;
+////						trace(X+dx >=0, X+dx <= FlxG.width - 4, Y + dy <= FlxG.height - 4, !overlapsAt(X + dx, Y + dy, allBlocks));
+////						trace("this block shouldn't move");
+////						trace(blocks.members[i].x + dx, blocks.members[i].y + dy);
+//						canMoveBlocks = false;
+//					}
+//				}
+				if (block != null && block.canMove(dx,dy))
 				{
-					if (!blocks.members[i].canMove(dx,dy))
-					{
-//						var X:Number = blocks.members[i].x;
-//						var Y:Number = blocks.members[i].y;
-//						trace(X+dx >=0, X+dx <= FlxG.width - 4, Y + dy <= FlxG.height - 4, !overlapsAt(X + dx, Y + dy, allBlocks));
-//						trace("this block shouldn't move");
-//						trace(blocks.members[i].x + dx, blocks.members[i].y + dy);
-						canMoveBlocks = false;
-					}
+					blocks.add(block);
 				}
-				if (canMoveBlocks)
+				for (var i:String in blocks.members)
 				{
-					for (i in blocks.members)
-					{
-						blocks.members[i].move(dx,dy);
-					}
-					x += dx;
-					y += dy;
+					blocks.members[i].move(dx,dy);
 				}
+				x += dx;
+				y += dy;
+//				if (canMoveBlocks)
+//				{
+//					for (i in blocks.members)
+//					{
+//						blocks.members[i].move(dx,dy);
+//					}
+//					x += dx;
+//					y += dy;
+//				}
+//				if (canMoveBlocks)
+//				{
+//					block.move(dx,dy);
+//					x += dx;
+//					y += dy;
+//				}
 			}
 			
 		}
@@ -79,7 +97,8 @@ package
 				if (FlxG.keys.LEFT)
 				{
 					move(-1,0);
-					if (blocks.members.length <= 0)
+//					if (blocks.members.length <= 0)
+					if (block == null)
 					{
 						facing = LEFT;
 					}
@@ -87,7 +106,8 @@ package
 				if (FlxG.keys.RIGHT)
 				{
 					move(1,0);
-					if (blocks.members.length <= 0)
+//					if (blocks.members.length <= 0)
+					if (block == null)
 					{
 						facing = RIGHT;
 					}

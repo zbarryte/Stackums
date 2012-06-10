@@ -10,6 +10,7 @@ package
 		private var counter:Number = 0;
 		public var allBlocks:FlxGroup = new FlxGroup();
 		public var landed:Boolean = false;
+		public var ceiling:Block = null;
 		
 		public function Block(X:Number=0, Y:Number=0)
 		{
@@ -27,6 +28,10 @@ package
 			{
 				x += dx;
 				y += dy;
+			}
+			if (ceiling != null)
+			{
+				ceiling.move(dx,dy);
 			}
 		}
 		
@@ -54,6 +59,37 @@ package
 			return true;
 		}
 		
+		public function addCeiling():void
+		{
+			var block:Block;
+			for (var i:String in allBlocks.members)
+			{
+				block = allBlocks.members[i];
+				if (block.x == x && block.y == y - frameHeight)
+				{
+					ceiling = block;
+				}
+			}
+			if (doesNotOvelapAt(x, y - frameHeight, allBlocks))
+			{
+				ceiling = null;
+			}
+//			if (doesNotOverlapAt(x,y - frameHeight,allBlocks))
+//			{
+//				ceiling = null;
+//			}
+//			if (doesNotOverlapAt(x, y + frameHeight, allBlocks))
+//			{
+//				ceiling = null;
+//			}
+				
+		}
+		
+		public function isThreeTall():Boolean
+		{
+			return ceiling != null && ceiling.ceiling != null;
+		}
+		
 		override public function update():void
 		{			
 			counter += FlxG.elapsed;
@@ -64,12 +100,19 @@ package
 			}
 			if (!canMove(0,frameHeight))
 			{
-				trace("hit ground");
+//				trace("hit ground");
 				landed = true;
 			}
 			else
 			{
 				landed = false;
+			}
+			addCeiling();
+//			trace(ceiling);
+			
+			if (isThreeTall())
+			{
+				trace("three tall");
 			}
 		}
 	}

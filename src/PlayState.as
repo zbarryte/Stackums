@@ -96,7 +96,7 @@ package
 		
 		override public function update():void
 		{
-			trace(!currentBlock.canMove(0,currentBlock.frameHeight));
+//			trace(!currentBlock.canMove(0,currentBlock.frameHeight));
 //			var dx:Number = currentBlock.frameWidth;
 //			var dy:Number = currentBlock.frameHeight;
 //			var X:Number = currentBlock.x;
@@ -109,20 +109,23 @@ package
 //			}
 			generateBlocks();
 			
-			var tempBlocks:FlxGroup = new FlxGroup();
-		
+//			var tempBlocks:FlxGroup = new FlxGroup();
+			var tempBlock:Block;
+			
 			if (FlxG.keys.X)
 			{
 				var block:Block;
 				var i:String;
 				if (player.facingLeft())
 				{
+					
 					for (i in blocks.members)
 					{
 						block = blocks.members[i];
-						if (block.x == player.x - 4 && block.y <= player.y + 4)
+						if (block.x == player.x - 4 && block.y == player.y + 4)
 						{
-							tempBlocks.add(block);
+//							tempBlocks.add(block);
+							tempBlock = block;
 						}
 					}
 				}
@@ -133,16 +136,20 @@ package
 						block = blocks.members[i];
 						if (block.x == player.x + 4 && block.y <= player.y + 4)
 						{
-							tempBlocks.add(block);
+//							tempBlocks.add(block);
+							tempBlock = block;
 						}
 					}
 				}
 			}
-			if (tempBlocks.members.length <= 0 || !FlxG.keys.X)
+			if (tempBlock == null || !FlxG.keys.X)
+//			if (tempBlocks.members.length <= 0 || !FlxG.keys.X)
 			{
-				player.blocks.clear();
+//				player.blocks.clear();
+				player.block = null;
 			}
-			player.blocks = tempBlocks;
+			player.block = tempBlock;
+//			player.blocks = tempBlocks;
 			
 //			else
 //			{
