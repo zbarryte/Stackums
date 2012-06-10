@@ -92,7 +92,25 @@ package
 		}
 		
 		override public function update():void
-		{			
+		{
+			
+//			var i:String;
+//			var block:Block;
+//			var shouldAdd:Boolean = true;
+//			for (i in allBlocks.members)
+//			{
+//				if (block == allBlocks.members[i])
+//				{
+//					trace("a match");
+//					shouldAdd = false;
+//				}
+//			}
+//			if (shouldAdd)
+//			{
+//				trace("adding me");
+//				allBlocks.add(this);
+//			}
+			
 			counter += FlxG.elapsed;
 			if (counter >= 0.5)
 			{
