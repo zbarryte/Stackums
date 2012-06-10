@@ -253,14 +253,7 @@ package
 				//			trace(removeBlocks.members.length);
 				
 				
-				//			for (i in removeBlocks.members)
-				//			{
-				//				block = removeBlocks.members[i];
-				//				if (block != null)
-				//				{
-				//					removeBlock(block);
-				//				}
-				//			}
+				
 				
 				super.update();
 				FlxG.collide();
