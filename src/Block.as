@@ -1,30 +1,27 @@
 package
-{
-	import flash.utils.Dictionary;
-	
+{	
 	import org.flixel.*;
 	
 	public class Block extends FlxSprite
 	{
 		[Embed(source="assets/green.png")] private var ImgBlock:Class;
-		private var counter:Number = 0;
+		
+		private var actionTimer:Number = 0;
 		public var allBlocks:FlxGroup = new FlxGroup();
 		public var landed:Boolean = false;
 		public var ceiling:Block = null;
-//		public var isThreeTall:Boolean = false;
+		public var maxTowerHeight:Number = 5;
+		public var curTowerHeight:Number = 1;
+		public var tower:FlxGroup = new FlxGroup;
 		
 		public function Block(X:Number=0, Y:Number=0)
 		{
 			super(X, Y, ImgBlock);
 			immovable = true;
 		}
-		
-		
+				
 		public function move(dx:Number,dy:Number):void
 		{
-//			dx = dx*frameWidth;
-//			dy = dy*frameWidth;
-
 			if (canMove(dx,dy))
 			{
 				x += dx;
@@ -38,9 +35,7 @@ package
 		
 		public function canMove(dx:Number, dy:Number):Boolean
 		{
-//			trace(x+dx >=0, x+dx <= FlxG.width - 4, y + dy <= FlxG.height - 4, !overlapsAt(x + dx, y + dy, allBlocks));
-
-			return doesNotOvelapAt(x + dx, y + dy, allBlocks)//!overlapsAt(x + dx, y + dy, allBlocks)
+			return doesNotOvelapAt(x + dx, y + dy, allBlocks)
 				&& x + dx >= 0
 				&& x + dx <= FlxG.width - 4
 				&& y + dy <= FlxG.height - 4;
@@ -74,52 +69,42 @@ package
 			if (doesNotOvelapAt(x, y - frameHeight, allBlocks))
 			{
 				ceiling = null;
-			}
-//			if (doesNotOverlapAt(x,y - frameHeight,allBlocks))
-//			{
-//				ceiling = null;
-//			}
-//			if (doesNotOverlapAt(x, y + frameHeight, allBlocks))
-//			{
-//				ceiling = null;
-//			}
-				
+			}	
 		}
 		
-		public function isThreeTall():Boolean
+		public function towerHeight():Number
 		{
-			return ceiling != null && ceiling.ceiling != null;
+			return towerHeightHelper(this,curTowerHeight);
+		}
+		
+		public function towerHeightHelper(block:Block,height:Number):Number
+		{
+			if (block.ceiling == null)
+			{
+				return 1;
+			}
+			return towerHeightHelper(block.ceiling,block.ceiling.curTowerHeight) + curTowerHeight;
+		}
+		
+		public function isMaxTowerHeight():Boolean
+		{
+			return towerHeight() == maxTowerHeight;
 		}
 		
 		override public function update():void
-		{
+		{	
+			trace(towerHeight());
 			
-//			var i:String;
-//			var block:Block;
-//			var shouldAdd:Boolean = true;
-//			for (i in allBlocks.members)
-//			{
-//				if (block == allBlocks.members[i])
-//				{
-//					trace("a match");
-//					shouldAdd = false;
-//				}
-//			}
-//			if (shouldAdd)
-//			{
-//				trace("adding me");
-//				allBlocks.add(this);
-//			}
-			
-			counter += FlxG.elapsed;
-			if (counter >= 0.5)
+			actionTimer += FlxG.elapsed;
+			// Should action timer reset?
+			if (actionTimer >= 0.5)
 			{
-				counter = 0;
+				// Yes, reset action timer; steady fall
+				actionTimer = 0;
 				move(0,frameHeight);
 			}
 			if (!canMove(0,frameHeight))
 			{
-//				trace("hit ground");
 				landed = true;
 			}
 			else
@@ -127,13 +112,6 @@ package
 				landed = false;
 			}
 			addCeiling();
-//			trace(ceiling);
-			
-//			if (isThreeTall())
-//			{
-//				isThreeTall = true;
-////				trace("three tall");
-//			}
 		}
 	}
 }
