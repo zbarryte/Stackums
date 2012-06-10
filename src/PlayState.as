@@ -16,6 +16,7 @@ package
 		private var blocks:FlxGroup = new FlxGroup();
 		private var allBlocks:FlxGroup = new FlxGroup();
 		private var generating:Boolean = false;
+		private var removeBlocks:FlxGroup = new FlxGroup();
 		
 		override public function create():void
 		{	
@@ -69,7 +70,7 @@ package
 //				trace("beginning generating");
 				generating = true;
 				
-				currentBlock = new Block(Math.floor(Math.random()*FlxG.width/4)*4, 8);
+				currentBlock = new Block(0,8);//(Math.floor(Math.random()*FlxG.width/4)*4, 8);
 				add(currentBlock);
 //				blocks.add(currentBlock);
 				allBlocks.add(currentBlock);
@@ -94,8 +95,17 @@ package
 			}
 		}
 		
+		public function removeBlock(block:Block):void
+		{
+			remove(block);
+			removeBlocks.add(block);
+			allBlocks.remove(block);
+//			blocks.remove(block);
+		}
+		
 		override public function update():void
 		{
+			
 //			trace(!currentBlock.canMove(0,currentBlock.frameHeight));
 //			var dx:Number = currentBlock.frameWidth;
 //			var dy:Number = currentBlock.frameHeight;
@@ -154,6 +164,67 @@ package
 //			else
 //			{
 //				player.blocks.clear();
+//			}
+//			var removeBlocks:FlxGroup = new FlxGroup;
+			
+			var tower:FlxGroup = new FlxGroup;
+			
+			for (i in allBlocks.members)
+			{
+				block = allBlocks.members[i];
+				if (block.isThreeTall())
+				// should really run up the chain, but let's do this for now
+				{
+					tower.add(block.ceiling.ceiling);
+					tower.add(block.ceiling);
+					tower.add(block);
+//					removeBlocks(block.ceiling.ceiling);
+//					removeBlocks(block.ceiling);
+//					removeBlocks(block);
+//					removeBlock(block.ceiling.ceiling);
+//					removeBlock(block.ceiling);
+//					removeBlock(block);
+				}
+			}
+			
+			for (i in tower.members)
+			{
+				block = tower.members[i];
+				allBlocks.remove(block,true);
+				remove(block,true);
+			}
+			
+//			for (var k:String in allBlocks.members)
+//			{
+//				trace(allBlocks.members[k].x,allBlocks.members[k].y);
+//			}
+			
+//			trace(removeBlocks.members.length);
+			
+//			if (removeBlocks.members.length > 0)
+//			{
+//				for (var j:String in removeBlocks.members)
+//				{
+//					trace("removing");
+//					block = removeBlocks.members[j];
+//					allBlocks.remove(block);
+//				}
+////				trace("got to clearing");
+////				removeBlocks = new FlxGroup();
+//				removeBlocks.clear();
+//			}
+//			allBlocks.clear();
+			
+//			trace(removeBlocks.members.length);
+			
+			
+//			for (i in removeBlocks.members)
+//			{
+//				block = removeBlocks.members[i];
+//				if (block != null)
+//				{
+//					removeBlock(block);
+//				}
 //			}
 			
 			super.update();

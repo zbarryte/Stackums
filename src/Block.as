@@ -11,6 +11,7 @@ package
 		public var allBlocks:FlxGroup = new FlxGroup();
 		public var landed:Boolean = false;
 		public var ceiling:Block = null;
+//		public var isThreeTall:Boolean = false;
 		
 		public function Block(X:Number=0, Y:Number=0)
 		{
@@ -110,10 +111,11 @@ package
 			addCeiling();
 //			trace(ceiling);
 			
-			if (isThreeTall())
-			{
-				trace("three tall");
-			}
+//			if (isThreeTall())
+//			{
+//				isThreeTall = true;
+////				trace("three tall");
+//			}
 		}
 	}
 }
