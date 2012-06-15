@@ -9,7 +9,7 @@ package
 		public var actionTimer:Number = 0;
 		public var block:Block = null;
 		public var state:PlayState;
-		public var maxJumpHeight:Number = 2;
+		public var maxJumpHeight:Number = 1.5;
 		public var jumpHeight:Number = maxJumpHeight;
 		
 		public function Player()
@@ -24,7 +24,7 @@ package
 		
 		public function facingRight():Boolean {return facing == RIGHT;}
 		
-		public function steadyFall():void {move(0,1);}
+		public function steadyFall():void {move(0,0.5);}
 		
 		public function move(dx:Number,dy:Number):void
 		{
@@ -51,6 +51,12 @@ package
 				// Move the player
 				x += dx;
 				y += dy;
+				
+				if (dy < 0)
+				{
+					jumpHeight += -dy/8.0;//frameHeight;
+					trace(jumpHeight);
+				}
 			}
 		}
 		
@@ -84,41 +90,54 @@ package
 			//for (var i:Number = 0; i <= 3; i++)
 //			if (jumpHeight < maxJumpHeight)
 //			{
-			jumpHeight += 1;
-			trace("in for loop in jump");
+//			jumpHeight += 1;
+//			trace("can move in loop?", canMove(0,-0.5));
 			move(0,-0.5);
 //			}
 		}
 		
-		public function continueJump():void
-		{
+		public function continueJumpOrSteadyFall():void
+		{			
 			if (jumpHeight < maxJumpHeight)
 			{
 				jump();
+			}
+			else
+			{
+				trace("steady falling");
+				steadyFall();
 			}
 		}
 		
 		override public function update():void
 		{	
-			//			trace("can't move down?", !canMove(0,1));
-//						trace("space pressed?", FlxG.keys.justPressed("SPACE"));
-			//			trace("space released", FlxG.keys.justReleased("SPACE"));
-			
-			// Should the player jump?
-			if (!canMove(0,1) && FlxG.keys.justPressed("SPACE"))//((isTouching(FLOOR)) && (FlxG.keys.justPressed("SPACE")))
-			{
-				jumpHeight = 0;
-				// Yes, jump!
-				//velocity.y = -acceleration.y*0.222;
-				jump();
-			}
-			continueJump();
-			
 			
 			actionTimer += FlxG.elapsed;
+			if (FlxG.keys.justPressed("LEFT") ||
+				FlxG.keys.justPressed("RIGHT") ||
+				FlxG.keys.justPressed("SPACE"))
+			{
+				actionTimer = 0.1;
+			}
+			
 			// Should action timer reset?
 			if (actionTimer >= 0.1)
 			{
+				
+				//			trace("can't move down?", !canMove(0,1));
+				//						trace("space pressed?", FlxG.keys.justPressed("SPACE"));
+				//			trace("space released", FlxG.keys.justReleased("SPACE"));
+				
+				// Should the player jump?
+				if (!canMove(0,1) && FlxG.keys.justPressed("SPACE"))//((isTouching(FLOOR)) && (FlxG.keys.justPressed("SPACE")))
+				{
+					jumpHeight = 0;
+					// Yes, jump!
+					//velocity.y = -acceleration.y*0.222;
+					jump();
+				}
+				continueJumpOrSteadyFall();
+				
 				// Yes, reset action timer
 				actionTimer = 0;
 				// Was left pressed?
@@ -145,8 +164,6 @@ package
 						facing = RIGHT;
 					}
 				}
-//				move(0,0.5);
-				steadyFall();
 			}
 		}
 	}
