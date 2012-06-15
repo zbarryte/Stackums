@@ -1,5 +1,7 @@
 package
 {
+	import flash.geom.Point;
+	
 	import flashx.textLayout.formats.BackgroundColor;
 	
 	import org.flixel.*;
@@ -10,46 +12,79 @@ package
 	{
 		[Embed(source="assets/floor.png")] private var ImgFloor:Class;
 		
-		private var floor:FlxTileblock;
+//		private var floor:FlxTileblock;
 		protected var player:Player;
 		protected var currentBlock:Block = new Block();
 		private var blocks:FlxGroup = new FlxGroup();
-		private var allBlocks:FlxGroup = new FlxGroup();
+		public var allBlocks:FlxGroup = new FlxGroup();
 		private var generating:Boolean = false;
 		private var removeBlocks:FlxGroup = new FlxGroup();
 		private var numBlocks:Number = 0;
 		private var counter:Number = 0;
 		private var winText:FlxText;
 		private var playerDead:Boolean = false;
+		private var coords:Array = new Array();
 		
 		override public function create():void
 		{	
-			floor = new FlxTileblock(0, FlxG.height, 224, 4);
-			floor.loadGraphic(ImgFloor);
-			add(floor);
+//			floor = new FlxTileblock(0, FlxG.height, 224, 4);
+//			floor.loadGraphic(ImgFloor);
+//			add(floor);
 			
 			player = new Player();
+			player.state = this;
 			add(player);
-					
+			
+			coords = [
+				new Point(FlxG.width/2 - 8,FlxG.height - 4),
+				new Point(FlxG.width/2 - 8,FlxG.height - 8),
+				new Point(FlxG.width/2 - 8,FlxG.height - 16),
+				new Point(FlxG.width/2 - 4,FlxG.height - 8),
+				new Point(FlxG.width/2, FlxG.height - 20),
+				new Point(FlxG.width/2 - 16,FlxG.height - 8)];
+			
+//			currentBlock = createBlock(FlxG.width/2 - 8, FlxG.height - 4);
+//			
 			currentBlock = new Block(FlxG.width/2 -  8,FlxG.height - 4);
 			add(currentBlock);
 			blocks.add(currentBlock);
 			allBlocks.add(currentBlock);
 			currentBlock.allBlocks = allBlocks;
 			numBlocks += 1;
-
-			currentBlock = new Block(FlxG.width/2 -  8,FlxG.height - 8);
-			add(currentBlock);
-			allBlocks.add(currentBlock);
-			currentBlock.allBlocks = allBlocks;
-			blocks.add(currentBlock);
-			numBlocks += 1;
+//
+//			currentBlock = new Block(FlxG.width/2 -  8,FlxG.height - 8);
+//			add(currentBlock);
+//			allBlocks.add(currentBlock);
+//			currentBlock.allBlocks = allBlocks;
+//			blocks.add(currentBlock);
+//			numBlocks += 1;
 			
 			winText = new FlxText(0,0,40);
 			winText.text = "you\nhave\nnot\nwon\n:(";
 			winText.alignment = "center";
 			winText.flicker(-1);
 			add(winText);
+		}
+		
+		public function createBlock(X:Number,Y:Number):Block
+		{
+			var block:Block = new Block(X,Y);
+			add(block)
+			allBlocks.add(block);
+			block.allBlocks = allBlocks;
+			numBlocks += 1;
+			return block;
+		}
+		
+		public function initBlocksFromArray(coords:Array):void
+		{
+			var point:Point;
+			for (var i:String in coords)
+			{
+				point = coords[i];
+				var block:Block = createBlock(point.x,point.y);
+				blocks.add(block);
+			}
 		}
 		
 		public function generateBlocks():void
@@ -76,7 +111,6 @@ package
 			remove(block);
 			removeBlocks.add(block);
 			allBlocks.remove(block);
-			//			blocks.remove(block);
 		}
 		
 		override public function update():void
@@ -162,7 +196,7 @@ package
 					
 				}
 				super.update();
-				FlxG.collide();	
+				//FlxG.collide();	
 			}
 			else
 			{

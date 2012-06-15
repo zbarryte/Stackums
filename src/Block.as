@@ -10,7 +10,7 @@ package
 		public var allBlocks:FlxGroup = new FlxGroup();
 		public var landed:Boolean = false;
 		public var ceiling:Block = null;
-		public var maxTowerHeight:Number = 3;
+		public var maxTowerHeight:Number = 5;
 		public var curTowerHeight:Number = 1;
 		public var flavor:String = "mint chip";
 		
@@ -22,14 +22,27 @@ package
 				
 		public function move(dx:Number,dy:Number):void
 		{
+//			var tower:FlxGroup = tower();
+//			var block:Block;
+//			for (var i:String in tower.members)
+//			{
+//				block = tower.members[i];
+//				if (block.canMove(dx,dy))
+//				{
+//					x += dx;
+//					y += dy;
+//				}
+//			}
+			
 			if (canMove(dx,dy))
 			{
 				x += dx;
 				y += dy;
-			}
-			if (ceiling != null)
-			{
-				ceiling.move(dx,dy);
+				
+				if (ceiling != null)
+				{
+					ceiling.move(dx,dy);
+				}
 			}
 		}
 		
@@ -108,12 +121,13 @@ package
 		
 		override public function update():void
 		{	
-//			trace(towerHeight());
-//			trace(tower());
-//			var tower:FlxGroup = tower();
-//			for (var i:String in tower.members)
+//			if (towerHeight() >= 2)
 //			{
-//				trace(tower.members[i].y);
+//				var tower:FlxGroup = tower();
+//				for (var i:String in tower.members)
+//				{
+//					tower.members[i].flicker(1);
+//				}
 //			}
 			
 			actionTimer += FlxG.elapsed;
