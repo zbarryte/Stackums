@@ -55,23 +55,26 @@ package
 				if (dy < 0)
 				{
 					jumpHeight += -dy/8.0;//frameHeight;
-					trace(jumpHeight);
+//					trace(jumpHeight);
 				}
 			}
 		}
 		
 		public function canMove(dx:Number,dy:Number):Boolean
 		{
+			trace("doesn't overlap", doesNotOverlapAt(x+dx,y+dy,state.allBlocks));
+			trace("not does overlap",!overlapsAt(x+dx,y+dy,state.allBlocks));
 			//trace(y + dy <= FlxG.height - frameHeight);
 			// Bound the block within the frame from left and right
 			return x + dx >= 0
 				&& x + dx <= FlxG.width - frameWidth
 				&& y + dy <= FlxG.height - frameHeight
 				&& y + dy >= 0
-				&& doesNotOvelapAt(x + dx, y + dy, state.allBlocks);
+				&& doesNotOverlapAt(x + dx, y + dy, state.allBlocks)
+				&& doesNotOverlapAt(x + dx, y + dy + frameHeight/2, state.allBlocks);
 		}
 		
-		public function doesNotOvelapAt(X:Number,Y:Number,group:FlxGroup):Boolean
+		public function doesNotOverlapAt(X:Number,Y:Number,group:FlxGroup):Boolean
 		{
 			var block:Block;
 			for (var i:String in group.members)
@@ -104,7 +107,7 @@ package
 			}
 			else
 			{
-				trace("steady falling");
+//				trace("steady falling");
 				steadyFall();
 			}
 		}
