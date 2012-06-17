@@ -34,7 +34,7 @@ package
 			//trace(canMove(dx,dy));
 			
 			// Can the player move forward?
-			if (canMove(dx,dy))// || (block != null && canMove(dx*2,dy*2)))
+			if (canMove(dx,dy) || (block != null && block.canMove(dx,dy)))// || (block != null && canMove(dx*2,dy*2)))
 			{	
 				var blocks:FlxGroup = new FlxGroup;
 				// Yes, should the player push a block?
@@ -62,14 +62,16 @@ package
 		
 		public function canMove(dx:Number,dy:Number):Boolean
 		{
-			trace("doesn't overlap", doesNotOverlapAt(x+dx,y+dy,state.allBlocks));
-			trace("not does overlap",!overlapsAt(x+dx,y+dy,state.allBlocks));
+//			trace("doesn't overlap", doesNotOverlapAt(x+dx,y+dy,state.allBlocks));
+//			trace("not does overlap",!overlapsAt(x+dx,y+dy,state.allBlocks));
 			//trace(y + dy <= FlxG.height - frameHeight);
 			// Bound the block within the frame from left and right
 			return x + dx >= 0
 				&& x + dx <= FlxG.width - frameWidth
 				&& y + dy <= FlxG.height - frameHeight
+//				&& y + dy + frameHeight/2 <= FlxG.height -frameHeight
 				&& y + dy >= 0
+//				&& y + dy + frameHeight/2 >= 0
 				&& doesNotOverlapAt(x + dx, y + dy, state.allBlocks)
 				&& doesNotOverlapAt(x + dx, y + dy + frameHeight/2, state.allBlocks);
 		}
@@ -131,8 +133,10 @@ package
 				//						trace("space pressed?", FlxG.keys.justPressed("SPACE"));
 				//			trace("space released", FlxG.keys.justReleased("SPACE"));
 				
+				trace(!canMove(0,0.5));
+				
 				// Should the player jump?
-				if (!canMove(0,1) && FlxG.keys.justPressed("SPACE"))//((isTouching(FLOOR)) && (FlxG.keys.justPressed("SPACE")))
+				if (!canMove(0,0.5) && FlxG.keys.justPressed("SPACE"))//((isTouching(FLOOR)) && (FlxG.keys.justPressed("SPACE")))
 				{
 					jumpHeight = 0;
 					// Yes, jump!

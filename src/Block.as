@@ -10,7 +10,7 @@ package
 		public var allBlocks:FlxGroup = new FlxGroup();
 		public var landed:Boolean = false;
 		public var ceiling:Block = null;
-		public var maxTowerHeight:Number = 5;
+		public var maxTowerHeight:Number = 3;
 		public var curTowerHeight:Number = 1;
 		public var flavor:String = "mint chip";
 		
