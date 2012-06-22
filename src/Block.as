@@ -9,37 +9,33 @@ package
 		private var actionTimer:Number = 0;
 		public var actionTime:Number = 0.5;
 		public var allBlocks:FlxGroup = new FlxGroup();
-		public var landed:Boolean = false;
+//		public var landed:Boolean = false;
 		public var ceiling:Block = null;
-		public var maxTowerHeight:Number = 5;
-		public var curTowerHeight:Number = 1;
+		public var maxTowerHeight:Number = 3;
+//		public var curTowerHeight:Number = 1;
 		public var flavor:String = "mint chip";
 		
 		public function Block(X:Number=0, Y:Number=0)
 		{
 			super(X, Y, ImgBlock);
-			immovable = true;
 		}
 				
+		public function steadyFall():void {move(0,frameHeight);}
+		
+		public function hasLanded():Boolean {return !canMove(0,frameHeight);}
+		
 		public function move(dx:Number,dy:Number):void
 		{
-//			var tower:FlxGroup = tower();
-//			var block:Block;
-//			for (var i:String in tower.members)
-//			{
-//				block = tower.members[i];
-//				if (block.canMove(dx,dy))
-//				{
-//					x += dx;
-//					y += dy;
-//				}
-//			}
-			
+			// Can the block move?
 			if (canMove(dx,dy))
 			{
+				// Yes, move the block
 				x += dx;
 				y += dy;
 				
+				// Then try to move the block above it (if one exists)
+				// (This block will, in turn, move the block above it, if one exists)
+				// (Note that this means that a block will only move in a tower if the block directly below it does so)
 				if (ceiling != null)
 				{
 					ceiling.move(dx,dy);
@@ -49,6 +45,11 @@ package
 		
 		public function canMove(dx:Number, dy:Number):Boolean
 		{
+			// Find potential position
+			var X:Number = x + dx;
+			var Y:Number = y + dy;
+			
+			// Check whether or not potential postion goes out of bounds or collides with blocks
 			return doesNotOvelapAt(x + dx, y + dy, allBlocks)
 				&& x + dx >= 0
 				&& x + dx <= FlxG.width - 4
@@ -57,29 +58,35 @@ package
 		
 		public function doesNotOvelapAt(X:Number,Y:Number,group:FlxGroup):Boolean
 		{
+			// Does at least one block exist at the desired coordinate?
 			var block:Block;
 			for (var i:String in group.members)
 			{
 				block = group.members[i];
 				if (block.x == X && block.y == Y)
 				{
+					// Yes, at least one block overlaps
 					return false;
 				}
 			}
+			// No, none overlap
 			return true;
 		}
 		
 		public function addCeiling():void
 		{
+			// Is there a block above the existing block?
 			var block:Block;
 			for (var i:String in allBlocks.members)
 			{
 				block = allBlocks.members[i];
 				if (block.x == x && block.y == y - frameHeight && block.flavor == flavor)
 				{
+					// Yes, declare it the ceiling
 					ceiling = block;
 				}
 			}
+			// Otherwise, declare the ceiling block null
 			if (doesNotOvelapAt(x, y - frameHeight, allBlocks))
 			{
 				ceiling = null;
@@ -88,65 +95,70 @@ package
 		
 		public function towerHeight():Number
 		{
-			return towerHeightHelper(this,curTowerHeight);
+			// Recursive function that determines tower height
+			return towerHeightHelper(this);
 		}
 		
-		public function towerHeightHelper(block:Block,height:Number):Number
+		public function towerHeightHelper(block:Block):Number
 		{
+			// Is this the top block in the tower?
 			if (block.ceiling == null)
 			{
+				// Yes, start the height count at 1
 				return 1;
 			}
-			return towerHeightHelper(block.ceiling,block.ceiling.curTowerHeight) + curTowerHeight;
+			// Otherwise, add 1 to the running count
+			return towerHeightHelper(block.ceiling) + 1;
 		}
 		
-		public function isMaxTowerHeight():Boolean
-		{
-			return towerHeight() == maxTowerHeight;
-		}
+		public function isMaxTowerHeight():Boolean {return towerHeight() == maxTowerHeight;}
 		
 		public function tower():FlxGroup
 		{
-			return towerHelper(this,new FlxGroup());
+			var group:FlxGroup = new FlxGroup();
+			group.add(this)
+			// Recursive function that determines the tower itself
+			return towerHelper(this,group);
 		}
 		
 		public function towerHelper(block:Block,group:FlxGroup):FlxGroup
 		{
-			group.add(block);
+			// Is this the top block in the tower?
 			if (block.ceiling == null)
 			{
+				// Yes, this is the complete tower
 				return group;
 			}
+			// Otherwise, add the block's ceiling to the tower
+			group.add(block.ceiling);
 			return towerHelper(block.ceiling,group);
 		}
 		
 		override public function update():void
 		{	
-//			if (towerHeight() >= 2)
-//			{
-//				var tower:FlxGroup = tower();
-//				for (var i:String in tower.members)
-//				{
-//					tower.members[i].flicker(1);
-//				}
-//			}
-			
+			// Update the action timer
+			// (The block folls after cycles of the timer)
 			actionTimer += FlxG.elapsed;
-			// Should action timer reset?
+			
+			// Is the block in a falling cycle?
 			if (actionTimer >= actionTime)
 			{
-				// Yes, reset action timer; steady fall
+				// Yes, reset action timer
 				actionTimer = 0;
-				move(0,frameHeight);
+				
+				// Then steady fall
+				steadyFall();
 			}
-			if (!canMove(0,frameHeight))
-			{
-				landed = true;
-			}
-			else
-			{
-				landed = false;
-			}
+//			if (!canMove(0,frameHeight))
+//			{
+//				landed = true;
+//			}
+//			else
+//			{
+//				landed = false;
+//			}
+			
+			// Keep track of ceiling
 			addCeiling();
 		}
 	}

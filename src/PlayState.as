@@ -97,11 +97,12 @@ package
 				add(currentBlock);
 				allBlocks.add(currentBlock);
 				currentBlock.allBlocks = allBlocks;
+				blocks.add(currentBlock);
 				numBlocks += 1;
 			}
-			if (currentBlock.landed)
+			if (currentBlock.hasLanded() || !currentBlock.alive)
 			{
-				blocks.add(currentBlock);
+//				blocks.add(currentBlock);
 				generating = false;
 			}
 		}
@@ -114,7 +115,9 @@ package
 		}
 		
 		override public function update():void
-		{			
+		{		
+			trace(currentBlock);
+			
 			if (!playerDead)
 			{
 				if (numBlocks > 0)
@@ -188,6 +191,7 @@ package
 						allBlocks.remove(block,true);
 						remove(block,true);
 						numBlocks -= 1;
+						block.kill();
 					}
 				}
 				else

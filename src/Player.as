@@ -7,6 +7,7 @@ package
 		[Embed(source="assets/you.png")] private var ImgPlayer:Class;
 		
 		public var actionTimer:Number = 0;
+		public var maxActionTimer:Number = 0.1;
 		public var block:Block = null;
 		public var state:PlayState;
 		public var maxJumpHeight:Number = 1.5;
@@ -25,14 +26,18 @@ package
 		
 		public function steadyFall():void {move(0,0.5);}
 		
+		public function jump():void {move(0,-0.5);}
+		
 		public function isPulling(dx:Number):Boolean
 		{
+			// Check if the player's facing opposite the direction of motion
 			return (facing == RIGHT && dx < 0) ||
 				(facing == LEFT && dx > 0);
 		}
 		
 		public function isPushing(dx:Number):Boolean
 		{
+			// Check if the player's facing the direction of motion
 			return (facing == RIGHT && dx > 0) ||
 				(facing == LEFT && dx < 0);
 		}
@@ -43,13 +48,14 @@ package
 			dx *= frameWidth;
 			dy *= frameHeight;
 						
-			// Is the player holding a block?
+			// Is the player holding a block?  If so it should move with the player.
+			// (Note that moving a block moves all blocks above it)
 			if (block != null)
 			{
 				// Is the player pushing?
 				if (isPushing(dx))
 				{
-					// Yes, move the blocks first, then the player
+					// Yes, move the block first, then the player
 					// (This prevents the player from colliding with the yet-to-be-moved block)
 					block.move(dx,dy);
 					if (canMove(dx,dy))
@@ -90,7 +96,7 @@ package
 			var X:Number = x + dx;
 			var Y:Number = y + dy;
 			
-			// Check if potential position goes out of bounds or collides
+			// Check whether or not potential position goes out of bounds or collides with blocks
 			return (X >= 0
 				&& X <= FlxG.width - frameWidth
 				&& Y <= FlxG.height - frameHeight
@@ -117,16 +123,19 @@ package
 			return true;
 		}
 		
-		public function jump():void {move(0,-0.5);}
-		
 		public function continueJumpOrSteadyFall():void
-		{			
-			if (jumpHeight < maxJumpHeight)
+		{
+			// Can the player still go higher (without exceeding the max jump height?)
+			// Also, make sure the player's still holding down the space bar.
+			if (jumpHeight < maxJumpHeight && FlxG.keys.SPACE)
 			{
+				// Yes, keep going up.
 				jump();
 			}
+			// Nope, the player's either reached the peak or isn't holdin space
 			else
 			{
+				// Fall
 				steadyFall();
 			}
 		}
@@ -134,6 +143,7 @@ package
 		override public function update():void
 		{	
 			// Update the action timer
+			// (The player only responds to key presses after cycles of the timer)
 			actionTimer += FlxG.elapsed;
 			
 			// Was a command entered?
@@ -141,40 +151,34 @@ package
 				FlxG.keys.justPressed("RIGHT") ||
 				FlxG.keys.justPressed("SPACE"))
 			{
-				// Yes, set
-				actionTimer = 0.1;
+				// Yes, set the timer to the max
+				// (This allows the player to act on the key commands)
+				actionTimer = maxActionTimer;
 			}
 			
-			// Should action timer reset?
-			if (actionTimer >= 0.1)
+			// Can the player accept actions?
+			if (actionTimer >= maxActionTimer)
 			{
-				
 				// Yes, reset action timer
 				actionTimer = 0;
 				
-				//			trace("can't move down?", !canMove(0,1));
-				//						trace("space pressed?", FlxG.keys.justPressed("SPACE"));
-				//			trace("space released", FlxG.keys.justReleased("SPACE"));
-				
-//				trace("can't fall down?", !canMove(0,0.5));
-//				trace("space just pressed?", FlxG.keys.justPressed("SPACE"));
-				
-				// Should the player jump?
-				if (!canMove(0,frameHeight/2) && FlxG.keys.justPressed("SPACE"))//((isTouching(FLOOR)) && (FlxG.keys.justPressed("SPACE")))
+				// Jump?
+				if (!canMove(0,frameHeight/2) && FlxG.keys.justPressed("SPACE"))
 				{
+					// Yes, jump
+					// (The Jump height tracks motion in the total dy of the jump)
 					jumpHeight = 0;
-					// Yes, jump!
-					//velocity.y = -acceleration.y*0.222;
 					jump();
 				}
+				// The player should only fall when not jumping.
 				continueJumpOrSteadyFall();
 				
-				// Was left pressed?
+				// Move left?
 				if (FlxG.keys.LEFT)
 				{
 					// Yes, move left
 					move(-1,0);
-					// Is player holding a block?
+					// Is the player holding a block?
 					if (block == null)
 					{
 						// No, so turn to face left
@@ -186,7 +190,7 @@ package
 				{
 					// Yes, move right
 					move(1,0);
-					// Is player holding a block?
+					// Is the player holding a block?
 					if (block == null)
 					{
 						// No, so turn to face right
