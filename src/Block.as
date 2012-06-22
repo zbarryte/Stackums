@@ -17,15 +17,6 @@ package
 		{
 			super(X, Y, SimpleGraphic);
 		}
-		
-//		public function BlockWithFlavor(X:Number,Y:Number,flavorString:String):Block
-//		{
-//			flavor = flavorString;
-////			var sourceString:String = "assets/".concat(flavor.concat(".png"));
-//			[Embed(source="assets/green.png")] var BlockImg:Class;
-////			[Embed(source=sourceString)] var BlockImg:Class;
-//			return Block(X,Y,BlockImg);
-//		}
 				
 		public function steadyFall():void {move(0,frameHeight);}
 		
@@ -87,7 +78,7 @@ package
 			for (var i:String in allBlocks.members)
 			{
 				block = allBlocks.members[i];
-				if (block.x == x && block.y == y - frameHeight && block.flavor == flavor)
+				if (block.x == x && block.y == y - frameHeight)
 				{
 					// Yes, declare it the ceiling
 					ceiling = block;
@@ -108,8 +99,8 @@ package
 		
 		public function towerHeightHelper(block:Block):Number
 		{
-			// Is this the top block in the tower?
-			if (block.ceiling == null)
+			// Is this the top block in the flavor tower?
+			if (block.ceiling == null || block.ceiling.flavor != block.flavor)
 			{
 				// Yes, start the height count at 1
 				return 1;
@@ -130,8 +121,8 @@ package
 		
 		public function towerHelper(block:Block,group:FlxGroup):FlxGroup
 		{
-			// Is this the top block in the tower?
-			if (block.ceiling == null)
+			// Is this the top block in the flavor tower?
+			if (block.ceiling == null || block.ceiling.flavor != block.flavor)
 			{
 				// Yes, this is the complete tower
 				return group;

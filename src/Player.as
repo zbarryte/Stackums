@@ -70,7 +70,8 @@ package
 			if (block != null)
 			{
 				// Is the player pushing?
-				if (isPushing(dx))
+				// (Also must check if the block above can move, if it exists
+				if (isPushing(dx) && (block.ceiling == null || block.ceiling.canMove(dx,dy)))
 				{
 					// Yes, move the block first, then the player
 					// (This prevents the player from colliding with the yet-to-be-moved block)

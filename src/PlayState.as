@@ -38,6 +38,8 @@ package
 			[Embed(source="assets/blue.png")] var img1:Class;
 			var str1:String = "blue";
 			blockFlavors[str1] = img1;
+			// To add more types of blocks, repeat this process
+			// (We haven't discussed functionally different blocks, but making those would require subclassing blocks)
 			
 			// Set up coords
 			coords = [
@@ -66,7 +68,7 @@ package
 			for (var i:String in coords)
 			{
 				point = coords[i];
-				addBlock(point.x,point.y,"green");
+				addBlock(point.x,point.y,randomBlockFlavor());
 			}
 		}
 		
