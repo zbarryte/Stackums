@@ -95,7 +95,6 @@ package
 				
 				currentBlock = new Block(Math.floor(Math.random()*FlxG.width/4)*4, 8);
 				add(currentBlock);
-//				blocks.add(currentBlock);
 				allBlocks.add(currentBlock);
 				currentBlock.allBlocks = allBlocks;
 				numBlocks += 1;
@@ -115,7 +114,7 @@ package
 		}
 		
 		override public function update():void
-		{
+		{			
 			if (!playerDead)
 			{
 				if (numBlocks > 0)
@@ -202,7 +201,6 @@ package
 					
 				}
 				super.update();
-				//FlxG.collide();	
 			}
 			else
 			{

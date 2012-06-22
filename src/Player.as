@@ -17,7 +17,6 @@ package
 			super(FlxG.width/2, FlxG.height - 8);
 			loadGraphic(ImgPlayer,false,true);
 			facing = RIGHT;
-			//acceleration.y = 222;
 		}
 		
 		public function facingLeft():Boolean {return facing == LEFT;}
@@ -39,12 +38,11 @@ package
 		}
 		
 		public function move(dx:Number,dy:Number):void
-		{			
+		{		
+			// Scale up dx and dy
 			dx *= frameWidth;
 			dy *= frameHeight;
-			
-			trace("block",block);
-			
+						
 			// Is the player holding a block?
 			if (block != null)
 			{
@@ -52,6 +50,7 @@ package
 				if (isPushing(dx))
 				{
 					// Yes, move the blocks first, then the player
+					// (This prevents the player from colliding with the yet-to-be-moved block)
 					block.move(dx,dy);
 					if (canMove(dx,dy))
 					{
@@ -62,133 +61,63 @@ package
 				// Is the player pulling and not about to go through a wall/block?
 				else if (isPulling(dx) && canMove(dx,dy))
 				{
-					// Yes, move the player first, then the blocks
-//					if (canMove(dx,dy))
-//					{
+					// Yes, move the player first, then the block
+					// (This prevents the block from colliding with the yet-to-be-moved player)
 					x += dx;
 					y += dy;
-//					}
 					block.move(dx,dy);
 				}
 			}
+			// No, the player's not holding a block, but can the player move?
 			else if (canMove(dx,dy))
 			{
+				// Yes, so move!
 				x += dx;
 				y += dy;
 				
+				// Is the player falling?
 				if (dy < 0)
 				{
+					// Yes, increment the jump height
 					jumpHeight += -dy/frameHeight;
-					//					trace(jumpHeight);
 				}
 			}
-				
-			
-			//trace(canMove(dx,dy));
-//			trace("can move?",canMove(dx,dy),dx,dy);
-			
-			// Can the player move forward? (or can the player push the block into an open spot?)
-//			if (canMove(dx,dy))// || (block != null && block.canMove(dx,dy)))// || (block != null && canMove(dx*2,dy*2)))
-//			{	
-////				if (block != null && block.canMove(dx,dy))
-////				{
-////					dy = 0;
-////				}
-////				trace(block);
-//				
-//				// Is the player holding a block?
-//				if (block != null)
-//				{
-//					trace("facing",facing,"dx",dx);
-//					// Is the player pulling?
-//					if (isPulling(dx))
-//					{
-//						trace("pulling");
-//						// Yes, move player first, then block
-//						x += dx;
-//						y += dy;
-//						block.move(dx,dy);
-//					}
-//					// Is the player pulshing?
-//					else if (isPushing(dx))
-//					{
-//						trace("pushing");
-//						// Yes, move the block first, then the player
-//						block.move(dx,dy);
-//						x += dx;
-//						y += dy;
-//					}
-//				}
-//				// No, the player's not holding a block
-//				else
-//				{
-//					// Just move the player
-//					x += dx;
-//					y += dy;
-//				}
-				
-//				var blocks:FlxGroup = new FlxGroup;
-//				// Yes, should the player push a block?
-//				if (block != null && block.canMove(dx,dy))
-//				{
-//					// Yes, prepare the block to be pushed
-//					blocks.add(block);
-//				}
-//				// Move the prepared block (yes, this is extremely circuitous...)
-//				for (var i:String in blocks.members)
-//				{
-//					blocks.members[i].move(dx,dy);
-//				}
-				
-//				if (block != null)
-//				{
-//					block.move(dx,dy);
-//				}
-//			}
 		}
 		
 		public function canMove(dx:Number,dy:Number):Boolean
 		{
-//			trace("does not overlap", doesNotOverlapAt(x + dx, y + dy + frameHeight/2, state.allBlocks));
-//			trace("doesn't overlap", doesNotOverlapAt(x+dx,y+dy,state.allBlocks));
-//			trace("not does overlap",!overlapsAt(x+dx,y+dy,state.allBlocks));
-			//trace(y + dy <= FlxG.height - frameHeight);
-			// Bound the block within the frame from left and right
-			return (x + dx >= 0
-				&& x + dx <= FlxG.width - frameWidth
-				&& y + dy <= FlxG.height - frameHeight
-//				&& y + dy + frameHeight/2 <= FlxG.height -frameHeight
-				&& y + dy >= 0
-//				&& y + dy + frameHeight/2 >= 0
-				&& doesNotOverlapAt(x + dx, y + dy, state.allBlocks)
-				&& doesNotOverlapAt(x + dx, y + dy + frameHeight/2, state.allBlocks));
-			//|| (block != null && block.x == x + dx && block.y == y + dy + frameHeight/2);
+			// Find potential position
+			var X:Number = x + dx;
+			var Y:Number = y + dy;
+			
+			// Check if potential position goes out of bounds or collides
+			return (X >= 0
+				&& X <= FlxG.width - frameWidth
+				&& Y <= FlxG.height - frameHeight
+				&& Y >= 0
+				&& doesNotOverlapAt(X, Y, state.allBlocks)
+				// (Checks overlapping for both the top and bottom of the player)
+				&& doesNotOverlapAt(X, Y + frameHeight/2, state.allBlocks));
 		}
 		
 		public function doesNotOverlapAt(X:Number,Y:Number,group:FlxGroup):Boolean
 		{
+			// Does at least one block exist at the desired coordinate?
 			var block:Block;
 			for (var i:String in group.members)
 			{
 				block = group.members[i];
 				if (block.x == X && block.y == Y)
 				{
+					// Yes, at least one block overlaps
 					return false;
 				}
 			}
+			// No, none overlap
 			return true;
 		}
 		
-		public function jump():void
-		{
-			//for (var i:Number = 0; i <= 3; i++)
-//			if (jumpHeight < maxJumpHeight)
-//			{
-//			jumpHeight += 1;
-//			trace("can move in loop?", canMove(0,-0.5));
-			move(0,-0.5);
-//			}
-		}
+		public function jump():void {move(0,-0.5);}
 		
 		public function continueJumpOrSteadyFall():void
 		{			
@@ -198,19 +127,21 @@ package
 			}
 			else
 			{
-//				trace("steady falling");
 				steadyFall();
 			}
 		}
 		
 		override public function update():void
 		{	
-			
+			// Update the action timer
 			actionTimer += FlxG.elapsed;
+			
+			// Was a command entered?
 			if (FlxG.keys.justPressed("LEFT") ||
 				FlxG.keys.justPressed("RIGHT") ||
 				FlxG.keys.justPressed("SPACE"))
 			{
+				// Yes, set
 				actionTimer = 0.1;
 			}
 			
