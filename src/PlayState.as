@@ -152,7 +152,6 @@ package
 								if (block.x == player.x - 4 && block.y == player.y + 4)
 								{
 									tempBlock = block;
-									trace(block.y);
 								}
 							}
 						}
@@ -161,14 +160,14 @@ package
 							for (i in blocks.members)
 							{
 								block = blocks.members[i];
-								if (block.x == player.x + 4 && block.y <= player.y + 4)
+								if (block.x == player.x + 4 && block.y == player.y + 4)
 								{
 									tempBlock = block;
 								}
 							}
 						}
 					}
-					if (tempBlock == null || !FlxG.keys.X)
+					else
 					{
 						player.block = null;
 					}

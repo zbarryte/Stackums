@@ -26,25 +26,106 @@ package
 		
 		public function steadyFall():void {move(0,0.5);}
 		
+		public function isPulling(dx:Number):Boolean
+		{
+			return (facing == RIGHT && dx < 0) ||
+				(facing == LEFT && dx > 0);
+		}
+		
+		public function isPushing(dx:Number):Boolean
+		{
+			return (facing == RIGHT && dx > 0) ||
+				(facing == LEFT && dx < 0);
+		}
+		
 		public function move(dx:Number,dy:Number):void
 		{			
 			dx *= frameWidth;
 			dy *= frameHeight;
 			
+			trace("block",block);
+			
+			// Is the player holding a block?
+			if (block != null)
+			{
+				// Is the player pushing?
+				if (isPushing(dx))
+				{
+					// Yes, move the blocks first, then the player
+					block.move(dx,dy);
+					if (canMove(dx,dy))
+					{
+						x += dx;
+						y += dy;
+					}
+				}
+				// Is the player pulling and not about to go through a wall/block?
+				else if (isPulling(dx) && canMove(dx,dy))
+				{
+					// Yes, move the player first, then the blocks
+//					if (canMove(dx,dy))
+//					{
+					x += dx;
+					y += dy;
+//					}
+					block.move(dx,dy);
+				}
+			}
+			else if (canMove(dx,dy))
+			{
+				x += dx;
+				y += dy;
+				
+				if (dy < 0)
+				{
+					jumpHeight += -dy/frameHeight;
+					//					trace(jumpHeight);
+				}
+			}
+				
+			
 			//trace(canMove(dx,dy));
 //			trace("can move?",canMove(dx,dy),dx,dy);
 			
 			// Can the player move forward? (or can the player push the block into an open spot?)
-			if (canMove(dx,dy))// || (block != null && block.canMove(dx,dy)))// || (block != null && canMove(dx*2,dy*2)))
-			{	
-//				if (block != null && block.canMove(dx,dy))
+//			if (canMove(dx,dy))// || (block != null && block.canMove(dx,dy)))// || (block != null && canMove(dx*2,dy*2)))
+//			{	
+////				if (block != null && block.canMove(dx,dy))
+////				{
+////					dy = 0;
+////				}
+////				trace(block);
+//				
+//				// Is the player holding a block?
+//				if (block != null)
 //				{
-//					dy = 0;
+//					trace("facing",facing,"dx",dx);
+//					// Is the player pulling?
+//					if (isPulling(dx))
+//					{
+//						trace("pulling");
+//						// Yes, move player first, then block
+//						x += dx;
+//						y += dy;
+//						block.move(dx,dy);
+//					}
+//					// Is the player pulshing?
+//					else if (isPushing(dx))
+//					{
+//						trace("pushing");
+//						// Yes, move the block first, then the player
+//						block.move(dx,dy);
+//						x += dx;
+//						y += dy;
+//					}
 //				}
-				
-				// Move the player
-				x += dx;
-				y += dy;
+//				// No, the player's not holding a block
+//				else
+//				{
+//					// Just move the player
+//					x += dx;
+//					y += dy;
+//				}
 				
 //				var blocks:FlxGroup = new FlxGroup;
 //				// Yes, should the player push a block?
@@ -59,17 +140,11 @@ package
 //					blocks.members[i].move(dx,dy);
 //				}
 				
-				if (block != null)
-				{
-					block.move(dx,dy);
-				}
-				
-				if (dy < 0)
-				{
-					jumpHeight += -dy/frameHeight;
-//					trace(jumpHeight);
-				}
-			}
+//				if (block != null)
+//				{
+//					block.move(dx,dy);
+//				}
+//			}
 		}
 		
 		public function canMove(dx:Number,dy:Number):Boolean
