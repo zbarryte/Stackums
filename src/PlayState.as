@@ -1,6 +1,8 @@
 package
 {
+	import flash.display.Loader;
 	import flash.geom.Point;
+	import flash.utils.Dictionary;
 	
 	import flashx.textLayout.formats.BackgroundColor;
 	
@@ -9,9 +11,7 @@ package
 	import org.flixel.FlxTilemap;
 	
 	public class PlayState extends FlxState
-	{
-		[Embed(source="assets/floor.png")] private var ImgFloor:Class;
-		
+	{		
 		protected var player:Player;
 		protected var currentBlock:Block = new Block();
 		public var allBlocks:FlxGroup = new FlxGroup();
@@ -21,6 +21,7 @@ package
 		private var maxGenerationTimer:Number = 0.2;
 		private var winText:FlxText;
 		private var coords:Array = new Array();
+		private var blockFlavors:Dictionary = new Dictionary();
 		
 		override public function create():void
 		{	
@@ -28,6 +29,15 @@ package
 			player = new Player();
 			player.state = this;
 			add(player);
+			
+			// Set up block flavors awkwardly
+			// (Embeds images and maps them to the strings)
+			[Embed(source="assets/green.png")] var img0:Class;
+			var str0:String = "green";
+			blockFlavors[str0] = img0;
+			[Embed(source="assets/blue.png")] var img1:Class;
+			var str1:String = "blue";
+			blockFlavors[str1] = img1;
 			
 			// Set up coords
 			coords = [
@@ -55,7 +65,7 @@ package
 			for (var i:String in coords)
 			{
 				point = coords[i];
-				addBlock(point.x,point.y);
+				addBlock(point.x,point.y,"green");
 			}
 		}
 		
@@ -65,14 +75,40 @@ package
 			if (currentBlock.hasLanded() || !currentBlock.alive)
 			{		
 				// Add a new block at a random x
-				addBlock(Math.floor(Math.random()*FlxG.width/4)*4, 0);
+				addBlock(Math.floor(Math.random()*FlxG.width/4)*4, 0, randomBlockFlavor());
 			}
 		}
 		
-		public function addBlock(X:Number,Y:Number):void
+		public function randomBlockFlavor():String
 		{
+			var flavors:Array = new Array();
+			var length:Number = 0;
+			for (var str:String in blockFlavors)
+			{
+//				flavors.add(str);
+				flavors.push(str);
+				length += 1;
+			}
+			return flavors[Math.floor(Math.random()*length)];
+		}
+		
+		public function imageFromString(str:String):Class
+		{
+//			var sourceString:String = "assets/" + string + ".png";
+////			[Embed(source=sourceString,mimeType="image/png")] var img:Class;
+////			return img;
+//			var myLoader:Loader = new Loader();
+//			var fileRequest:URLRequest = new URLRequest(sourceString);
+//			myLoader.load(fileRequest);
+//			return myLoader;
+			return blockFlavors[str];
+		}
+		
+		public function addBlock(X:Number,Y:Number,flavor:String):void
+		{			
 			// Create block
-			currentBlock = new Block(X,Y);
+			currentBlock = new Block(X,Y,imageFromString(flavor));
+			currentBlock.flavor = flavor;
 			// Add block to list of blocks and to screen
 			allBlocks.add(currentBlock);
 			add(currentBlock);

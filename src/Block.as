@@ -4,19 +4,28 @@ package
 	
 	public class Block extends FlxSprite
 	{
-		[Embed(source="assets/green.png")] private var ImgBlock:Class;
+//		[Embed(source="assets/green.png")] private var MintChipImg:Class;
 		
 		private var actionTimer:Number = 0;
 		public var maxActionTimer:Number = 0.5;
 		public var allBlocks:FlxGroup = new FlxGroup();
 		public var ceiling:Block = null;
 		public var maxTowerHeight:Number = 3;
-		public var flavor:String = "mint chip";
+		public var flavor:String = null;
 		
-		public function Block(X:Number=0, Y:Number=0)
+		public function Block(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
 		{
-			super(X, Y, ImgBlock);
+			super(X, Y, SimpleGraphic);
 		}
+		
+//		public function BlockWithFlavor(X:Number,Y:Number,flavorString:String):Block
+//		{
+//			flavor = flavorString;
+////			var sourceString:String = "assets/".concat(flavor.concat(".png"));
+//			[Embed(source="assets/green.png")] var BlockImg:Class;
+////			[Embed(source=sourceString)] var BlockImg:Class;
+//			return Block(X,Y,BlockImg);
+//		}
 				
 		public function steadyFall():void {move(0,frameHeight);}
 		
