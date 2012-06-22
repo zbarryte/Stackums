@@ -15,7 +15,7 @@ package
 		
 		public function Player()
 		{
-			super(FlxG.width/2, FlxG.height - 8);
+			super(FlxG.width/2, 0);
 			loadGraphic(ImgPlayer,false,true);
 			facing = RIGHT;
 		}
@@ -27,6 +27,23 @@ package
 		public function steadyFall():void {move(0,0.5);}
 		
 		public function jump():void {move(0,-0.5);}
+		
+		public function isCrushed():Boolean
+		{
+			//Does at least one block overlap the player?
+			var block:Block
+			for (var i:String in state.allBlocks.members)
+			{
+				block = state.allBlocks.members[i];
+				if ((block.x == x && block.y == y) || (block.x == x && block.y == y + frameHeight/2))
+				{
+					// Yes, the player is crushed
+					return true;
+				}
+			}
+			// No, the player is not yet crushed
+			return false;
+		}
 		
 		public function isPulling(dx:Number):Boolean
 		{
@@ -197,6 +214,12 @@ package
 						facing = RIGHT;
 					}
 				}
+			}
+			// Has the player been crushed?
+			if (isCrushed())
+			{
+				// Kill the player
+				this.kill();
 			}
 		}
 	}

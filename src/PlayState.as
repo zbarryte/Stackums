@@ -12,52 +12,35 @@ package
 	{
 		[Embed(source="assets/floor.png")] private var ImgFloor:Class;
 		
-//		private var floor:FlxTileblock;
 		protected var player:Player;
 		protected var currentBlock:Block = new Block();
-		private var blocks:FlxGroup = new FlxGroup();
 		public var allBlocks:FlxGroup = new FlxGroup();
-		private var generating:Boolean = false;
 		private var removeBlocks:FlxGroup = new FlxGroup();
 		private var numBlocks:Number = 0;
-		private var counter:Number = 0;
+		private var generationTimer:Number = 0;
+		private var maxGenerationTimer:Number = 0.2;
 		private var winText:FlxText;
 		private var playerDead:Boolean = false;
 		private var coords:Array = new Array();
 		
 		override public function create():void
 		{	
-//			floor = new FlxTileblock(0, FlxG.height, 224, 4);
-//			floor.loadGraphic(ImgFloor);
-//			add(floor);
-			
+			// Set up player
 			player = new Player();
 			player.state = this;
 			add(player);
 			
+			// Set up coords
 			coords = [
 				new Point(FlxG.width/2 - 8,FlxG.height - 4),
 				new Point(FlxG.width/2 - 8,FlxG.height - 8),
-				new Point(FlxG.width/2 - 8,FlxG.height - 16),
+				new Point(FlxG.width/2 - 4,FlxG.height - 4),
 				new Point(FlxG.width/2 - 4,FlxG.height - 8),
-				new Point(FlxG.width/2, FlxG.height - 20),
-				new Point(FlxG.width/2 - 16,FlxG.height - 8)];
+				new Point(FlxG.width/2, FlxG.height - 4),
+				new Point(FlxG.width/2 - 16,FlxG.height - 4)];
 			
-//			currentBlock = createBlock(FlxG.width/2 - 8, FlxG.height - 4);
-//			
-			currentBlock = new Block(FlxG.width/2 -  8,FlxG.height - 4);
-			add(currentBlock);
-			blocks.add(currentBlock);
-			allBlocks.add(currentBlock);
-			currentBlock.allBlocks = allBlocks;
-			numBlocks += 1;
-//
-//			currentBlock = new Block(FlxG.width/2 -  8,FlxG.height - 8);
-//			add(currentBlock);
-//			allBlocks.add(currentBlock);
-//			currentBlock.allBlocks = allBlocks;
-//			blocks.add(currentBlock);
-//			numBlocks += 1;
+			// Init blocks from coords
+			initBlocksFromCoords(coords);
 			
 			winText = new FlxText(0,0,40);
 			winText.text = "you\nhave\nnot\nwon\n:(";
@@ -66,138 +49,148 @@ package
 			add(winText);
 		}
 		
-		public function createBlock(X:Number,Y:Number):Block
-		{
-			var block:Block = new Block(X,Y);
-			add(block)
-			allBlocks.add(block);
-			block.allBlocks = allBlocks;
-			numBlocks += 1;
-			return block;
-		}
 		
-		public function initBlocksFromArray(coords:Array):void
+		public function initBlocksFromCoords(coords:Array):void
 		{
 			var point:Point;
 			for (var i:String in coords)
 			{
 				point = coords[i];
-				var block:Block = createBlock(point.x,point.y);
-				blocks.add(block);
+				addBlock(point.x,point.y);
 			}
 		}
 		
 		public function generateBlocks():void
 		{
-			if (!generating)
-			{
-				generating = true;
-				
-				currentBlock = new Block(Math.floor(Math.random()*FlxG.width/4)*4, 8);
-				add(currentBlock);
-				allBlocks.add(currentBlock);
-				currentBlock.allBlocks = allBlocks;
-				blocks.add(currentBlock);
-				numBlocks += 1;
-			}
+			// Is the current block done falling?
 			if (currentBlock.hasLanded() || !currentBlock.alive)
-			{
-//				blocks.add(currentBlock);
-				generating = false;
+			{		
+				// Add a new block at a random x
+				addBlock(Math.floor(Math.random()*FlxG.width/4)*4, 0);
 			}
+		}
+		
+		public function addBlock(X:Number,Y:Number):void
+		{
+			// Create block
+			currentBlock = new Block(X,Y);
+			// Add block to list of blocks and to screen
+			allBlocks.add(currentBlock);
+			add(currentBlock);
+			// Give current block knowledge of other blocks
+			currentBlock.allBlocks = allBlocks;
+			// Increment block count
+			numBlocks += 1;
 		}
 		
 		public function removeBlock(block:Block):void
 		{
-			remove(block);
-			removeBlocks.add(block);
-			allBlocks.remove(block);
+			// Only decrement block count if block is alive
+			if (block.alive)
+			{
+				numBlocks -= 1;
+			}
+			// Remove block from list of blocks and from screen
+			allBlocks.remove(block,true);
+			remove(block,true);
+			// Kill the block when done
+			block.kill();
 		}
 		
 		override public function update():void
-		{		
-			trace(currentBlock);
-			
-			if (!playerDead)
+		{					
+			// Proceed with game if player is alive
+			if (player.alive)
 			{
+				// Proceed with game if there are more than 0 live blocks
 				if (numBlocks > 0)
 				{	
-					if (currentBlock.x == player.x && currentBlock.y == player.y)
+					// Generate blocks every cycle of the generation timer
+					generationTimer += FlxG.elapsed;
+					if (generationTimer >= maxGenerationTimer)
 					{
-						playerDead = true;
-					}
-					
-					counter += FlxG.elapsed;
-					if (counter >= 0.2)
-					{
-						counter = 0;
+						generationTimer = 0;
 						generateBlocks();
 					}
 					
+					// Impatient?
 					if (FlxG.keys.DOWN)
 					{
-						currentBlock.actionTime -= 0.1;
+						// Speed up current block
+						currentBlock.maxActionTimer -= 0.1;
 					}
 					
-					var tempBlock:Block;
-					
+					// Grabbing block?
 					if (FlxG.keys.X)
 					{
 						var block:Block;
 						var i:String;
+						// Is the player facing left?
 						if (player.facingLeft())
 						{
-							
-							for (i in blocks.members)
+							// Check if there is a block directly to the left
+							for (i in allBlocks.members)
 							{
-								block = blocks.members[i];
+								block = allBlocks.members[i];
 								if (block.x == player.x - 4 && block.y == player.y + 4)
 								{
-									tempBlock = block;
+									// Yes, grab this block
+									player.block = block;
 								}
 							}
 						}
-						if (player.facingRight())
+						// Is the player facing right?
+						else if (player.facingRight())
 						{
-							for (i in blocks.members)
+							// Check if there is a block directly to the right
+							for (i in allBlocks.members)
 							{
-								block = blocks.members[i];
+								block = allBlocks.members[i];
 								if (block.x == player.x + 4 && block.y == player.y + 4)
 								{
-									tempBlock = block;
+									// Yes, grab this block
+									player.block = block;
 								}
 							}
 						}
 					}
+					// The player's not grabbing a block
 					else
 					{
+						// Set the player's block to be null
 						player.block = null;
 					}
-					player.block = tempBlock;
-					var tower:FlxGroup = new FlxGroup;
 					
+					// Set up list of towers to eliminate
+					var towers:FlxGroup = new FlxGroup;
 					for (i in allBlocks.members)
 					{
 						block = allBlocks.members[i];
 						if (block.isMaxTowerHeight())
 						{
-							tower = block.tower();
+							towers.add(block.tower());
 						}
 					}
 					
-					for (i in tower.members)
-					{
-						block = tower.members[i];
-						allBlocks.remove(block,true);
-						remove(block,true);
-						numBlocks -= 1;
-						block.kill();
+					var tower:FlxGroup = new FlxGroup;
+					var j:String;
+					// Eliminate all blocks in each tower
+					for (i in towers.members)
+					{	
+						tower = towers.members[i];
+						for (j in tower.members)
+						{
+							removeBlock(tower.members[j]);
+						}
 					}
 				}
+				// All the blocks are gone, you've won!
 				else
 				{
+					// Change text
 					winText.text = "YOU\nHAVE\nNOW\nWON!\n:D";
 					
+					// Press X to reset game
 					if (FlxG.keys.X)
 					{
 						FlxG.resetGame();
@@ -206,9 +199,13 @@ package
 				}
 				super.update();
 			}
+			// The player's dead.  Oops.
 			else
 			{
+				// Change text
 				winText.text = "you\nare\nnow\ndead\n:|";
+				
+				// Press X to reset game
 				if (FlxG.keys.X)
 				{
 					FlxG.resetGame();

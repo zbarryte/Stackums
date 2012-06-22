@@ -7,12 +7,10 @@ package
 		[Embed(source="assets/green.png")] private var ImgBlock:Class;
 		
 		private var actionTimer:Number = 0;
-		public var actionTime:Number = 0.5;
+		public var maxActionTimer:Number = 0.5;
 		public var allBlocks:FlxGroup = new FlxGroup();
-//		public var landed:Boolean = false;
 		public var ceiling:Block = null;
 		public var maxTowerHeight:Number = 3;
-//		public var curTowerHeight:Number = 1;
 		public var flavor:String = "mint chip";
 		
 		public function Block(X:Number=0, Y:Number=0)
@@ -141,7 +139,7 @@ package
 			actionTimer += FlxG.elapsed;
 			
 			// Is the block in a falling cycle?
-			if (actionTimer >= actionTime)
+			if (actionTimer >= maxActionTimer)
 			{
 				// Yes, reset action timer
 				actionTimer = 0;
@@ -149,14 +147,6 @@ package
 				// Then steady fall
 				steadyFall();
 			}
-//			if (!canMove(0,frameHeight))
-//			{
-//				landed = true;
-//			}
-//			else
-//			{
-//				landed = false;
-//			}
 			
 			// Keep track of ceiling
 			addCeiling();
