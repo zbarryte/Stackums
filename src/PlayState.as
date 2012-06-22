@@ -61,6 +61,7 @@ package
 		
 		public function initBlocksFromCoords():void
 		{
+			// Create a block at each listed coordinate
 			var point:Point;
 			for (var i:String in coords)
 			{
@@ -81,33 +82,22 @@ package
 		
 		public function randomBlockFlavor():String
 		{
+			// Take a random key from the dictionary
+			// (To do this, create an array from the keys, then pick a random element in that array)
 			var flavors:Array = new Array();
 			var length:Number = 0;
 			for (var str:String in blockFlavors)
 			{
-//				flavors.add(str);
 				flavors.push(str);
 				length += 1;
 			}
 			return flavors[Math.floor(Math.random()*length)];
 		}
 		
-		public function imageFromString(str:String):Class
-		{
-//			var sourceString:String = "assets/" + string + ".png";
-////			[Embed(source=sourceString,mimeType="image/png")] var img:Class;
-////			return img;
-//			var myLoader:Loader = new Loader();
-//			var fileRequest:URLRequest = new URLRequest(sourceString);
-//			myLoader.load(fileRequest);
-//			return myLoader;
-			return blockFlavors[str];
-		}
-		
 		public function addBlock(X:Number,Y:Number,flavor:String):void
 		{			
-			// Create block
-			currentBlock = new Block(X,Y,imageFromString(flavor));
+			// Create block with the image specified by the flavor
+			currentBlock = new Block(X,Y,blockFlavors[flavor]);
 			currentBlock.flavor = flavor;
 			// Add block to list of blocks and to screen
 			allBlocks.add(currentBlock);
