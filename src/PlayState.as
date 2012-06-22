@@ -20,7 +20,6 @@ package
 		private var generationTimer:Number = 0;
 		private var maxGenerationTimer:Number = 0.2;
 		private var winText:FlxText;
-		private var playerDead:Boolean = false;
 		private var coords:Array = new Array();
 		
 		override public function create():void
@@ -40,7 +39,7 @@ package
 				new Point(FlxG.width/2 - 16,FlxG.height - 4)];
 			
 			// Init blocks from coords
-			initBlocksFromCoords(coords);
+			initBlocksFromCoords();
 			
 			winText = new FlxText(0,0,40);
 			winText.text = "you\nhave\nnot\nwon\n:(";
@@ -50,7 +49,7 @@ package
 		}
 		
 		
-		public function initBlocksFromCoords(coords:Array):void
+		public function initBlocksFromCoords():void
 		{
 			var point:Point;
 			for (var i:String in coords)
