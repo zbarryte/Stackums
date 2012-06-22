@@ -7,6 +7,7 @@ package
 		[Embed(source="assets/green.png")] private var ImgBlock:Class;
 		
 		private var actionTimer:Number = 0;
+		public var actionTime:Number = 0.5;
 		public var allBlocks:FlxGroup = new FlxGroup();
 		public var landed:Boolean = false;
 		public var ceiling:Block = null;
@@ -132,7 +133,7 @@ package
 			
 			actionTimer += FlxG.elapsed;
 			// Should action timer reset?
-			if (actionTimer >= 0.5)
+			if (actionTimer >= actionTime)
 			{
 				// Yes, reset action timer; steady fall
 				actionTimer = 0;

@@ -27,34 +27,46 @@ package
 		public function steadyFall():void {move(0,0.5);}
 		
 		public function move(dx:Number,dy:Number):void
-		{
+		{			
 			dx *= frameWidth;
 			dy *= frameHeight;
 			
 			//trace(canMove(dx,dy));
+//			trace("can move?",canMove(dx,dy),dx,dy);
 			
-			// Can the player move forward?
-			if (canMove(dx,dy) || (block != null && block.canMove(dx,dy)))// || (block != null && canMove(dx*2,dy*2)))
+			// Can the player move forward? (or can the player push the block into an open spot?)
+			if (canMove(dx,dy))// || (block != null && block.canMove(dx,dy)))// || (block != null && canMove(dx*2,dy*2)))
 			{	
-				var blocks:FlxGroup = new FlxGroup;
-				// Yes, should the player push a block?
-				if (block != null && block.canMove(dx,dy))
-				{
-					// Yes, prepare the block to be pushed
-					blocks.add(block);
-				}
-				// Move the prepared block (yes, this is extremely circuitous...)
-				for (var i:String in blocks.members)
-				{
-					blocks.members[i].move(dx,dy);
-				}
+//				if (block != null && block.canMove(dx,dy))
+//				{
+//					dy = 0;
+//				}
+				
 				// Move the player
 				x += dx;
 				y += dy;
 				
+//				var blocks:FlxGroup = new FlxGroup;
+//				// Yes, should the player push a block?
+//				if (block != null && block.canMove(dx,dy))
+//				{
+//					// Yes, prepare the block to be pushed
+//					blocks.add(block);
+//				}
+//				// Move the prepared block (yes, this is extremely circuitous...)
+//				for (var i:String in blocks.members)
+//				{
+//					blocks.members[i].move(dx,dy);
+//				}
+				
+				if (block != null)
+				{
+					block.move(dx,dy);
+				}
+				
 				if (dy < 0)
 				{
-					jumpHeight += -dy/8.0;//frameHeight;
+					jumpHeight += -dy/frameHeight;
 //					trace(jumpHeight);
 				}
 			}
@@ -62,18 +74,20 @@ package
 		
 		public function canMove(dx:Number,dy:Number):Boolean
 		{
+//			trace("does not overlap", doesNotOverlapAt(x + dx, y + dy + frameHeight/2, state.allBlocks));
 //			trace("doesn't overlap", doesNotOverlapAt(x+dx,y+dy,state.allBlocks));
 //			trace("not does overlap",!overlapsAt(x+dx,y+dy,state.allBlocks));
 			//trace(y + dy <= FlxG.height - frameHeight);
 			// Bound the block within the frame from left and right
-			return x + dx >= 0
+			return (x + dx >= 0
 				&& x + dx <= FlxG.width - frameWidth
 				&& y + dy <= FlxG.height - frameHeight
 //				&& y + dy + frameHeight/2 <= FlxG.height -frameHeight
 				&& y + dy >= 0
 //				&& y + dy + frameHeight/2 >= 0
 				&& doesNotOverlapAt(x + dx, y + dy, state.allBlocks)
-				&& doesNotOverlapAt(x + dx, y + dy + frameHeight/2, state.allBlocks);
+				&& doesNotOverlapAt(x + dx, y + dy + frameHeight/2, state.allBlocks));
+			//|| (block != null && block.x == x + dx && block.y == y + dy + frameHeight/2);
 		}
 		
 		public function doesNotOverlapAt(X:Number,Y:Number,group:FlxGroup):Boolean
@@ -129,14 +143,18 @@ package
 			if (actionTimer >= 0.1)
 			{
 				
+				// Yes, reset action timer
+				actionTimer = 0;
+				
 				//			trace("can't move down?", !canMove(0,1));
 				//						trace("space pressed?", FlxG.keys.justPressed("SPACE"));
 				//			trace("space released", FlxG.keys.justReleased("SPACE"));
 				
-				trace(!canMove(0,0.5));
+//				trace("can't fall down?", !canMove(0,0.5));
+//				trace("space just pressed?", FlxG.keys.justPressed("SPACE"));
 				
 				// Should the player jump?
-				if (!canMove(0,0.5) && FlxG.keys.justPressed("SPACE"))//((isTouching(FLOOR)) && (FlxG.keys.justPressed("SPACE")))
+				if (!canMove(0,frameHeight/2) && FlxG.keys.justPressed("SPACE"))//((isTouching(FLOOR)) && (FlxG.keys.justPressed("SPACE")))
 				{
 					jumpHeight = 0;
 					// Yes, jump!
@@ -145,8 +163,6 @@ package
 				}
 				continueJumpOrSteadyFall();
 				
-				// Yes, reset action timer
-				actionTimer = 0;
 				// Was left pressed?
 				if (FlxG.keys.LEFT)
 				{

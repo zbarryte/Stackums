@@ -95,6 +95,7 @@ package
 				
 				currentBlock = new Block(Math.floor(Math.random()*FlxG.width/4)*4, 8);
 				add(currentBlock);
+//				blocks.add(currentBlock);
 				allBlocks.add(currentBlock);
 				currentBlock.allBlocks = allBlocks;
 				numBlocks += 1;
@@ -118,7 +119,7 @@ package
 			if (!playerDead)
 			{
 				if (numBlocks > 0)
-				{
+				{	
 					if (currentBlock.x == player.x && currentBlock.y == player.y)
 					{
 						playerDead = true;
@@ -129,6 +130,11 @@ package
 					{
 						counter = 0;
 						generateBlocks();
+					}
+					
+					if (FlxG.keys.DOWN)
+					{
+						currentBlock.actionTime -= 0.1;
 					}
 					
 					var tempBlock:Block;
@@ -146,6 +152,7 @@ package
 								if (block.x == player.x - 4 && block.y == player.y + 4)
 								{
 									tempBlock = block;
+									trace(block.y);
 								}
 							}
 						}
