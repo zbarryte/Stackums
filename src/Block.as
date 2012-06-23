@@ -10,7 +10,7 @@ package
 		public var maxActionTimer:Number = 0.5;
 		public var allBlocks:FlxGroup = new FlxGroup();
 		public var ceiling:Block = null;
-		public var maxTowerHeight:Number = 3;
+		public var maxTowerHeight:Number = 7;
 		public var flavor:String = null;
 		
 		public function Block(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)

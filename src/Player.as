@@ -25,8 +25,10 @@ package
 		public function facingRight():Boolean {return facing == RIGHT;}
 		
 		public function steadyFall():void {move(0,0.5);}
+		
+		public function hasLanded():Boolean {return !canMove(0,frameHeight/2);}
 				
-		public function jump():void {move(0,-0.5);}
+		public function jump():void {block = null; move(0,-0.5);}
 		
 		public function isCrushed():Boolean
 		{
@@ -67,7 +69,9 @@ package
 						
 			// Is the player holding a block?  If so it should move with the player.
 			// (Note that moving a block moves all blocks above it)
-			if (block != null)
+			// (If the block grabbed is falling, the player should not be able to move it left or right)
+			// (The player can, however, jump from tower to tower)
+			if (block != null && (dx == 0 || block.hasLanded() || hasLanded()))
 			{
 				// Is the player pushing?
 				// (Also must check if the block above can move, if it exists
@@ -181,7 +185,8 @@ package
 				actionTimer = 0;
 				
 				// Jump?
-				if (!canMove(0,frameHeight/2) && FlxG.keys.justPressed("SPACE"))
+				// (Able to jump if the player cannot fall or is clinding to a block, like wall jumping)
+				if ((!canMove(0,frameHeight/2) || block != null) && FlxG.keys.justPressed("SPACE"))
 				{
 					// Yes, jump
 					// (The Jump height tracks motion in the total dy of the jump)
