@@ -66,6 +66,13 @@ package
 			// Scale up dx and dy
 			dx *= frameWidth;
 			dy *= frameHeight;
+			
+			// Is the player hanging?
+			if (FlxG.keys.Z && block != null)
+			{
+				// Don't allow the player to accidentally pull/push the block
+				dx = 0;
+			}
 						
 			// Is the player holding a block?  If so it should move with the player.
 			// (Note that moving a block moves all blocks above it)

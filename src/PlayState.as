@@ -161,7 +161,7 @@ package
 		}
 		
 		override public function update():void
-		{					
+		{
 			// Proceed with game if player is alive
 			if (player.alive)
 			{
@@ -187,7 +187,7 @@ package
 					}
 					
 					// Grabbing block?
-					if (FlxG.keys.X)
+					if (FlxG.keys.X || FlxG.keys.Z)
 					{
 						player.block = null;
 						var block:Block;
