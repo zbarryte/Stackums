@@ -22,6 +22,7 @@ package
 		private var winText:FlxText;
 		private var coords:Array = new Array();
 		private var blockFlavors:Dictionary = new Dictionary();
+		private var flavors:Array = new Array();
 		
 		override public function create():void
 		{	
@@ -35,9 +36,11 @@ package
 			[Embed(source="assets/green.png")] var img0:Class;
 			var str0:String = "green";
 			blockFlavors[str0] = img0;
+			flavors.push(str0);
 			[Embed(source="assets/blue.png")] var img1:Class;
 			var str1:String = "blue";
 			blockFlavors[str1] = img1;
+			flavors.push(str1);
 			// To add more types of blocks, repeat this process
 			// (We haven't discussed functionally different blocks, but making those would require subclassing blocks)
 			
@@ -53,6 +56,7 @@ package
 			// Init blocks from coords
 			initBlocksFromCoords();
 			
+			// Draw the win text
 			winText = new FlxText(0,0,40);
 			winText.text = "you\nhave\nnot\nwon\n:(";
 			winText.alignment = "center";
@@ -60,6 +64,37 @@ package
 			add(winText);
 		}
 		
+		public function updateFlavors():void
+		{
+			// Clear old arry
+			flavors = new Array();
+			// Check the flavors of each block
+			var block:Block;
+			for (var i:String in allBlocks.members)
+			{
+				// Add each new flavor to the array of flavors
+				block = allBlocks.members[i];
+				if (notInFlavors(block.flavor))
+				{
+					flavors.push(block.flavor);
+				}
+			}
+		}
+		
+		public function notInFlavors(guessFlavor:String):Boolean
+		{
+			// Check each flavor against the guessed flavor
+			for (var i:String in flavors)
+			{
+				// There is a match, so it's already in the list of flavors
+				if (flavors[i] == guessFlavor)
+				{
+					return false;
+				}
+			}
+			// It matches none of the other flavors, so it's a new flavor
+			return true;
+		}
 		
 		public function initBlocksFromCoords():void
 		{
@@ -84,16 +119,17 @@ package
 		
 		public function randomBlockFlavor():String
 		{
-			// Take a random key from the dictionary
-			// (To do this, create an array from the keys, then pick a random element in that array)
-			var flavors:Array = new Array();
-			var length:Number = 0;
-			for (var str:String in blockFlavors)
-			{
-				flavors.push(str);
-				length += 1;
-			}
-			return flavors[Math.floor(Math.random()*length)];
+//			// Take a random key from the dictionary
+//			// (To do this, create an array from the keys, then pick a random element in that array)
+//			var flavors:Array = new Array();
+//			var length:Number = 0;
+//			for (var str:String in blockFlavors)
+//			{
+//				flavors.push(str);
+//				length += 1;
+//			}
+			
+			return flavors[Math.floor(Math.random()*flavors.length)];
 		}
 		
 		public function addBlock(X:Number,Y:Number,flavor:String):void
@@ -132,6 +168,9 @@ package
 				// Proceed with game if there are more than 0 live blocks
 				if (numBlocks > 0)
 				{	
+					// Update flavors
+					updateFlavors();
+					
 					// Generate blocks every cycle of the generation timer
 					generationTimer += FlxG.elapsed;
 					if (generationTimer >= maxGenerationTimer)
