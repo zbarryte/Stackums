@@ -4,7 +4,7 @@ package
 	
 	public class Player extends FlxSprite
 	{
-		[Embed(source="assets/you.png")] private var ImgPlayer:Class;
+		[Embed(source="assets/person02.png")] private var ImgPlayer:Class;
 		
 		public var actionTimer:Number = 0;
 		public var maxActionTimer:Number = 0.1;
