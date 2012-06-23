@@ -189,6 +189,7 @@ package
 					// Grabbing block?
 					if (FlxG.keys.X)
 					{
+						player.block = null;
 						var block:Block;
 						var i:String;
 						// Is the player facing left?

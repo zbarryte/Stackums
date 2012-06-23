@@ -25,7 +25,7 @@ package
 		public function facingRight():Boolean {return facing == RIGHT;}
 		
 		public function steadyFall():void {move(0,0.5);}
-		
+				
 		public function jump():void {move(0,-0.5);}
 		
 		public function isCrushed():Boolean
