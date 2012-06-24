@@ -8,9 +8,10 @@ package
 		
 		private var actionTimer:Number = 0;
 		public var maxActionTimer:Number = 0.5;
+		public var maxActionTimerImpatient:Number = 0.02;
 		public var allBlocks:FlxGroup = new FlxGroup();
 		public var ceiling:Block = null;
-		public var maxTowerHeight:Number = 7;
+		public var maxTowerHeight:Number = 5;
 		public var flavor:String = null;
 		
 		public function Block(X:Number=0, Y:Number=0, SimpleGraphic:Class=null)
@@ -137,6 +138,17 @@ package
 			// Update the action timer
 			// (The block folls after cycles of the timer)
 			actionTimer += FlxG.elapsed;
+			
+			// Impatient?
+			if (FlxG.keys.DOWN)
+			{
+				// Shorten the time needed for blocks
+				// (Do this by prematurely setting the action timer to the max value)
+				if (actionTimer >= maxActionTimerImpatient)
+				{
+					actionTimer = maxActionTimer;
+				}
+			}
 			
 			// Is the block in a falling cycle?
 			if (actionTimer >= maxActionTimer)

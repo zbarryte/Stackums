@@ -179,12 +179,12 @@ package
 						generateBlocks();
 					}
 					
-					// Impatient?
-					if (FlxG.keys.DOWN)
-					{
-						// Speed up current block
-						currentBlock.maxActionTimer -= 0.1;
-					}
+//					// Impatient?
+//					if (FlxG.keys.DOWN)
+//					{
+//						// Speed up current block
+//						currentBlock.maxActionTimer -= 0.1;
+//					}
 					
 					// Grabbing block?
 					if (FlxG.keys.X || FlxG.keys.Z)

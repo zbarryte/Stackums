@@ -4,7 +4,7 @@ package
 	
 	public class Player extends FlxSprite
 	{
-		[Embed(source="assets/person02.png")] private var ImgPlayer:Class;
+		[Embed(source="assets/rtrooper.png")] private var ImgPlayer:Class;
 		
 		public var actionTimer:Number = 0;
 		public var maxActionTimer:Number = 0.1;
@@ -206,10 +206,14 @@ package
 				// Move left?
 				if (FlxG.keys.LEFT)
 				{
-					// Yes, move left
-					move(-1,0);
-					// Is the player holding a block?
-					if (block == null)
+					// Is the player facing left or holding a block?
+					if (facing == LEFT || block != null)
+					{
+						// Yes, move left
+						move(-1,0);
+					}
+					// Is the player holding a block or already facing left?
+					if (block == null || facing == LEFT)
 					{
 						// No, so turn to face left
 						facing = LEFT;
@@ -218,10 +222,14 @@ package
 				// Was right pressed?
 				if (FlxG.keys.RIGHT)
 				{
-					// Yes, move right
-					move(1,0);
-					// Is the player holding a block?
-					if (block == null)
+					// Is the player facing right or holding a block?
+					if (facing == RIGHT || block != null)
+					{
+						// Yes, move right
+						move(1,0);
+					}
+					// Is the player holding a block or already facing right?
+					if (block == null || facing == RIGHT)
 					{
 						// No, so turn to face right
 						facing = RIGHT;
