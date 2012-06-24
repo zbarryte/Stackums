@@ -112,6 +112,8 @@ package
 		
 		public function isMaxTowerHeight():Boolean {return towerHeight() == maxTowerHeight;}
 		
+		public function isAtLeastMaxTowerHeight():Boolean {return towerHeight() >= maxTowerHeight;}
+		
 		public function tower():FlxGroup
 		{
 			var group:FlxGroup = new FlxGroup();

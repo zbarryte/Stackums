@@ -61,7 +61,7 @@ package
 			winText.text = "you\nhave\nnot\nwon\n:(";
 			winText.alignment = "center";
 			winText.flicker(-1);
-			add(winText);
+//			add(winText);
 		}
 		
 		public function updateFlavors():void
@@ -119,16 +119,7 @@ package
 		
 		public function randomBlockFlavor():String
 		{
-//			// Take a random key from the dictionary
-//			// (To do this, create an array from the keys, then pick a random element in that array)
-//			var flavors:Array = new Array();
-//			var length:Number = 0;
-//			for (var str:String in blockFlavors)
-//			{
-//				flavors.push(str);
-//				length += 1;
-//			}
-			
+			// takes a random element from the list of flavors
 			return flavors[Math.floor(Math.random()*flavors.length)];
 		}
 		
@@ -179,13 +170,6 @@ package
 						generateBlocks();
 					}
 					
-//					// Impatient?
-//					if (FlxG.keys.DOWN)
-//					{
-//						// Speed up current block
-//						currentBlock.maxActionTimer -= 0.1;
-//					}
-					
 					// Grabbing block?
 					if (FlxG.keys.X || FlxG.keys.Z)
 					{
@@ -199,7 +183,7 @@ package
 							for (i in allBlocks.members)
 							{
 								block = allBlocks.members[i];
-								if (block.x == player.x - 4 && block.y == player.y + 4)
+								if (block.x == player.x - player.frameWidth && block.y == player.y + player.frameHeight/2)
 								{
 									// Yes, grab this block
 									player.block = block;
@@ -213,7 +197,7 @@ package
 							for (i in allBlocks.members)
 							{
 								block = allBlocks.members[i];
-								if (block.x == player.x + 4 && block.y == player.y + 4)
+								if (block.x == player.x + player.frameWidth && block.y == player.y + player.frameHeight/2)
 								{
 									// Yes, grab this block
 									player.block = block;
@@ -233,7 +217,7 @@ package
 					for (i in allBlocks.members)
 					{
 						block = allBlocks.members[i];
-						if (block.isMaxTowerHeight())
+						if (block.isAtLeastMaxTowerHeight())
 						{
 							towers.add(block.tower());
 						}
